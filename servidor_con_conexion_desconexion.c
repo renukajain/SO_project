@@ -7,10 +7,48 @@
 #include <stdio.h>
 #include <mysql.h>
 
+typedef struct {
+	char nombre [20];
+	int socket;
+} Conectado;
 
+typedef struct {
+	Conectado conectados [100];
+	int num;
+} ListaConectados;
+
+int addLista (ListaConectados *lista, char nombre[20], int socket){
+	if (lista->num == 100)
+		return -1;
+	else {
+		strcpy(lista->conectados[lista->num].nombre, nombre);
+		lista->conectados[lista->num].socket = socket;
+		lista->num++;
+		return 0;
+	}
+}
+
+int DameSocket (ListaConectados *lista, char nombre[20]){
+	int i=0;
+	int found = 0;
+	while (( i<lista->num) && !found){
+		if ( strcmp(lista->conectados[i].nombre, nombre)==0)
+			found = 1;
+		if (!found)
+			i++;
+	}
+	if (found)
+		return lista->conectados[i].socket;
+	else
+		return -1;
+}
 
 int main(int argc, char *argv[])
 { 
+	ListaConectados miLista;
+	miLista.num =0;
+	
+	
 	int sock_conn, sock_listen, ret;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
@@ -143,9 +181,9 @@ int main(int argc, char *argv[])
 					sprintf (respuesta,"Bienvenido %s, estas dado de alta con id: %d\n",nombre,id);
 				}
 			}
-			else if (codigo ==2){// quiere loguearse
+			else if (codigo ==2){// iniciar sesion
 				p = strtok( NULL, "/");
-				strcpy (nombre, p); //Tenemos la contrase�a
+				strcpy (nombre, p); //Tenemos la contraseￃﾱa
 				p = strtok( NULL, "/");
 				strcpy(passw, p);
 				sprintf (consulta,"SELECT psswrd FROM Jugadores WHERE username = '%s'", nombre); 
@@ -153,7 +191,7 @@ int main(int argc, char *argv[])
 				err=mysql_query (conn, consulta); 
 				if (err!=0) {
 					sprintf (respuesta, "Error al consultar datos de la base %u %s\n",
-							mysql_errno(conn), mysql_error(conn));
+							 mysql_errno(conn), mysql_error(conn));
 					exit (1);
 				}
 				resultado = mysql_store_result (conn); 
@@ -162,10 +200,21 @@ int main(int argc, char *argv[])
 					sprintf (respuesta,"No existe usuario\n");
 				else
 				{
-					if(strcmp(row[0],passw)==0)
+					if(strcmp(row[0],passw)==0){
 						strcpy (respuesta,"Bienvenido!\n");
-					else
-						strcpy (respuesta,"id o contrase�a erronia\n");
+						int add = addLista (&miLista, nombre, 5);
+						if (add == -1)
+							printf("lista llena\n");
+						else 
+							printf("a￱adido\n");
+						
+						int socket = DameSocket (&miLista, nombre);
+						if (socket != -1)
+							printf("Socket de %s es %d\n", nombre, socket);
+						else 
+							printf("user no esta en la lista\n");
+					}else
+						strcpy (respuesta,"id o contraseￃﾱa erronia\n");
 				}
 			}
 			else if (codigo == 3){ //consulta 1
@@ -253,7 +302,7 @@ int main(int argc, char *argv[])
 				}
 			}
 			
-			else if (codigo == 5){ //consulta 2
+			else if (codigo == 5){ //consulta 3
 				p = strtok(NULL, "/");
 				strcpy(nombre, p);
 				strcpy(noms, " ");
