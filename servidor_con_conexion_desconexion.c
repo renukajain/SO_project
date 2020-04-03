@@ -217,9 +217,10 @@ int main(int argc, char *argv[])
 						strcpy (respuesta,"id o contraseￃﾱa erronia\n");
 				}
 			}
-			else if (codigo == 3){ //consulta 1
+			else if (codigo == 3){ //consulta 1 (recibe el codigo de una partida y tiene que devolver el nombre 
+				//de los jugadores menores de edad en la partida 
 				p = strtok(NULL, "/");
-				id =  atoi (p);
+				id =  atoi (p); // id de la partida
 				strcpy(noms, " ");
 				sprintf (consulta,"SELECT Jugador FROM Participacion WHERE Partida = %d;", id); 
 				err=mysql_query (conn, consulta); 
@@ -228,62 +229,69 @@ int main(int argc, char *argv[])
 					exit (1);
 				}
 				//recogemos el resultado de la consulta 
-				resultado = mysql_store_result (conn); 
-				row = mysql_fetch_row (resultado);
+				resultado = mysql_store_result (conn); // tabla de id de todos los jugadores en la partida indicada
+				row = mysql_fetch_row (resultado);// id del jugador
 				if (row == NULL)
 					sprintf (respuesta, "No exsite esa partida\n");
 				else{
-					while(row!=NULL){
+					while(row!=NULL){ // para cada jugador en la partida row[0] es el id del jugador
+						//tenemo que buscar en la tabla Jugadores si el jugador es menor de edad y obtener el nombre
 						sprintf (consulta, "SELECT username FROM Jugadores WHERE age < 18 && Id = %s;", row[0]);
 						err = mysql_query (conn, consulta);
 						if (err!=0) {
 							printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 							exit (1);
 						}
-						resultado2 = mysql_store_result (conn);
+						resultado2 = mysql_store_result (conn); // nombre de los jugadores nemores de edad
 						row2 = mysql_fetch_row (resultado2);
 						if (row2 != NULL){
 							sprintf(noms, "%s%s, ", noms, row2[0]);
 						}
 						row = mysql_fetch_row (resultado);
 					}
-					if (strcmp(noms, " ")== 0)
+					if (strcmp(noms, " ")== 0) // en caso de que no hubiera juagadores nmenores de edad 
 						sprintf(respuesta, "no hay jugadores menores de edad");
 					else 
 						sprintf (respuesta, "Nombre de la persona: %s", noms );		
 				}
 			}
 			
-			else if (codigo == 4){ //consulta 2
+			else if (codigo == 4){ //consulta 2 (recibe el nombre de un jugador y retorna los nombres
+				// de las ciudades donde ha jugado este
 				p = strtok(NULL, "/");
 				strcpy(nombre, p);
 				strcpy(noms, " ");
 				sprintf (consulta,"SELECT Id FROM Jugadores WHERE username = '%s';", nombre); 
+				//buscamos el id del jugador, ya que en la tabla RELACION (en nuestro caso la llamamos Participacion)
+				//se relaciona el id del jugador con el id de la partida.
+				//Además podemos comprobar si el user existe en la BBDD antes de hacer la consulta de las cuidaes
 				err=mysql_query (conn, consulta); 
 				if (err!=0) {
 					sprintf (respuesta, "Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 					exit (1);
 				}
 				//recogemos el resultado de la consulta 
-				resultado = mysql_store_result (conn); 
-				row = mysql_fetch_row (resultado);
+				resultado = mysql_store_result (conn); //id del jugador cuyo username hemos recibido 
+				row = mysql_fetch_row (resultado);//solo habra una fila, yaque solo hay un jugador con esa id
 				if (row == NULL)
 					sprintf (respuesta, "No existe este usuario\n");
 				else{
 					sprintf (consulta,"SELECT Partida FROM Participacion WHERE Jugador = %s;", row[0]); 
+					//selectionamos las partidas en la que ha jugado, obtenemos el id de las partidas
 					err=mysql_query (conn, consulta); 
 					if (err!=0) {
 						sprintf (respuesta, "Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 						exit (1);
 					}
 					//recogemos el resultado de la consulta 
-					resultado = mysql_store_result (conn); 
+					resultado = mysql_store_result (conn); // tabla con id de las partidas 
 					row = mysql_fetch_row (resultado);
 					if (row == NULL)
 						sprintf (respuesta, "No hay partidas jugadas por este usuario\n");
 					else{
-						while(row!=NULL){//tabla con id de las partidas 
+						while(row!=NULL){ 
 							sprintf (consulta, "SELECT Ciudad FROM Partidas WHERE Id = %s;", row[0]);
+							//obtenemos el ciudad donde se ha realizado la partida
 							err = mysql_query (conn, consulta);
 							if (err!=0) {
 								printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -298,15 +306,16 @@ int main(int argc, char *argv[])
 						}
 						sprintf (respuesta, "Nombre de las ciudades: %s", noms );	
 					}
-					
 				}
 			}
 			
-			else if (codigo == 5){ //consulta 3
+			else if (codigo == 5){ //consulta 3 (recibe el nombre de un jugador y, retorna el nombre de las personas 
+				// a los que ha ganado.
 				p = strtok(NULL, "/");
 				strcpy(nombre, p);
 				strcpy(noms, " ");
 				sprintf (consulta,"SELECT Id FROM Jugadores WHERE username = '%s';", nombre); 
+				// obtenemos el ID del jugador, ya que en la BBDD hemos guardado el id del ganador
 				err=mysql_query (conn, consulta); 
 				if (err!=0) {
 					sprintf (respuesta, "Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -314,39 +323,42 @@ int main(int argc, char *argv[])
 				}
 				//recogemos el resultado de la consulta 
 				resultado = mysql_store_result (conn); 
-				row = mysql_fetch_row (resultado);
+				row = mysql_fetch_row (resultado);//obtenemos el id del jugador 
 				if (row == NULL)
 					sprintf (respuesta, "No existe este usuario\n");
 				else{
 					id = atoi(row[0]);
 					sprintf (consulta,"SELECT Id FROM Partidas WHERE winner = %s;", row[0]); 
+					//buscamos aquellas partidas en las que el ganador es el jugador que hemos recibido
 					err=mysql_query (conn, consulta); 
 					if (err!=0) {
 						sprintf (respuesta, "Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 						exit (1);
 					}
 					//recogemos el resultado de la consulta 
-					resultado = mysql_store_result (conn); 
+					resultado = mysql_store_result (conn); // tabla de id de las partidas en las que ha ganado el usuario
 					row = mysql_fetch_row (resultado);
 					if (row == NULL)
 						sprintf (respuesta, "No hay partidas ganadas por este usuario\n");
 					else{
 						while(row!=NULL){//tabla con id de las partidas 
-							strcat(noms,"Partida");
+							strcat(noms,"Partida");// anotamos el id de la partida ganada
 							strcat(noms, row[0]);
 							strcat(noms, ": ");
+							//buscamos a los jugadore presentes en las partidas ganadas por el jugador indicado
 							sprintf (consulta, "SELECT Jugador FROM Participacion WHERE Partida = %s;", row[0]);
 							err = mysql_query (conn, consulta);
 							if (err!=0) {
 								printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 								exit (1);
 							}
-							resultado2 = mysql_store_result (conn);
+							resultado2 = mysql_store_result (conn);//obtenemos de id de los jugadores 
 							row2 = mysql_fetch_row (resultado2);//jugadores id
 							while (row2 != NULL){
 								int id2 = atoi(row2[0]);
-								if (id != id2){
+								if (id != id2){ // seleccionamos a los jugadores que no coincidan con el ganador que ya sabemos
 									sprintf (consulta, "SELECT username FROM Jugadores WHERE Id = %s ;", row2[0]);
+									//obtenemos el nombre del jugador
 									err = mysql_query (conn, consulta);
 									if (err!=0) {
 										printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -356,13 +368,12 @@ int main(int argc, char *argv[])
 									row3 = mysql_fetch_row (resultado3);
 									sprintf(noms, "%s%s, ", noms, row3[0]);
 								}
-								row2 = mysql_fetch_row (resultado2);
+								row2 = mysql_fetch_row (resultado2); //siguiente jugador 
 							}
-							row = mysql_fetch_row (resultado);
+							row = mysql_fetch_row (resultado); // siguiente partida ganada
 						}
 						sprintf (respuesta, "Nombre de los jugadores: %s", noms );	
 					}
-					
 				}
 			}
 			
