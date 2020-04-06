@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <mysql.h>
 #include <pthread.h>
+#include <ctype.h>
 
 typedef struct {
 	char nombre [20];
@@ -134,13 +135,18 @@ void *AtenderCliente(void *socket){
 			resultado = mysql_store_result(conn); 
 			row = mysql_fetch_row(resultado);
 			id = 1;
+			int found = 0;
 			while (row != NULL){
+				for(int i =0;i<strlen(nombre);i++)
+					nombre[i] =toupper(nombre[i]);
+				for(int i =0;i<strlen(row[0]);i++)
+					row[0][i]= toupper(row[0][i]);
 				if (strcmp(nombre, row[0]) == 0) //si coinsideix el nom amb user existent
-					sprintf(respuesta, "ER");
+					found = 1;
 				id++;
 				row = mysql_fetch_row(resultado);
 			}
-			if (strcmp(respuesta, "ER") != 0){//en cas que user no es troba a BBDD l'afegim
+			if (!found){//en cas que user no es troba a BBDD l'afegim
 				char consulta[200];
 				strcpy (consulta, "INSERT INTO Jugadores VALUES (");
 				sprintf(pet,"%s%d,'%s','%s', %d, 0);",consulta,id,nombre,passw,edad);
@@ -151,7 +157,8 @@ void *AtenderCliente(void *socket){
 					exit (1);
 				}
 				sprintf (respuesta,"Bienvenido %s, estas dado de alta con id: %d\n",nombre,id);
-			}
+			}else 
+				sprintf (respuesta, "Existe usuario con este nombre");
 		}
 		else if (codigo ==2){// iniciar sesion
 			p = strtok( NULL, "/");
