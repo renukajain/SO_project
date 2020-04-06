@@ -75,10 +75,7 @@ namespace WindowsFormsApplication1
                         byte[] msg2 = new byte[80];
                         server.Receive(msg2);
                         mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                        if (mensaje == "ER")
-                            MessageBox.Show("Existe usuario con este nombre");
-                        else
-                            MessageBox.Show(mensaje);
+                        MessageBox.Show(mensaje);
                     }
                     else
                         MessageBox.Show("La contraseña no coincide");
