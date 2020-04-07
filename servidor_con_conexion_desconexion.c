@@ -45,6 +45,20 @@ int DameSocket (ListaConectados *lista, char nombre[20]){
 		return -1;
 }
 
+void DameLista (ListaConectados *lista, char respuesta[512]){
+	int i=0;
+	if (lista->num == 0)
+		sprintf (respuesta, "no hay conectados");
+	else {
+		strcpy (respuesta, "lista de conectados: ");
+		while (i<lista->num){
+			sprintf (respuesta, "%s%s, ", respuesta, lista->conectados[i].nombre);
+			printf ("conectado %d %s\n", i+1, lista->conectados[i].nombre);
+			i++;
+		}
+	}
+}
+
 void HacerConsulta(char consulta[200], char respuesta[200], MYSQL_RES *resultado, MYSQL_ROW row, MYSQL *conn){
 	int err=mysql_query (conn, consulta); 
 	if (err!=0) {
@@ -217,6 +231,9 @@ void *AtenderCliente(void *socket){
 			strcat (consulta, " Participacion.Partida = Partidas.Id and Jugadores.Id = Participacion.Jugador and Jugadores.username!='");
 			sprintf (consulta, "%s%s';",consulta, nombre); 
 			HacerConsulta(consulta, respuesta, resultado, row, conn);
+		}
+		else if (codigo == 6){//lista de conectados
+			DameLista (&miLista, respuesta);
 		}
 		else
 				 printf("no hay consulta");
