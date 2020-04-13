@@ -27,18 +27,51 @@ MYSQL *conn;
 char consulta[512];
 char peticion[512];
 char respuesta[512];
+int count;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;//ACCESO EXLUYENTE
 
 int addLista (char nombre[20], int socket){
 	if (miLista.num == 100)
 		return -1;
 	else {
+		pthread_mutex_lock(&mutex); 
 		strcpy(miLista.conectados[miLista.num].nombre, nombre);
 		miLista.conectados[miLista.num].socket = socket;
 		miLista.num++;
+		pthread_mutex_unlock(&mutex); 
 		return 0;
 	}
 }
-
+int DamePos(char nombre[20]){
+	int i=0;
+	int found = 0;
+	while (( i<miLista.num) && !found){
+		if ( strcmp(miLista.conectados[i].nombre, nombre)==0)
+			found = 1;
+		if (!found)
+			i++;
+	}
+	if (found)
+		return i;
+	else
+		return -1;
+}
+int delLista (char nombre[20]){
+	int pos = DamePos(nombre);
+	if (pos == -1)
+		return -1;
+	else {
+		int i;
+		pthread_mutex_lock(&mutex);
+		for(i=pos;i<miLista.num-1;i++){
+			strcpy(miLista.conectados[i].nombre, miLista.conectados[i+1].nombre);
+			miLista.conectados[miLista.num].socket = miLista.conectados[i+1].socket;
+		}
+		miLista.num--;
+		pthread_mutex_unlock(&mutex); 
+		return 0;
+	}
+}
 int DameSocket (char nombre[20]){
 	int i=0;
 	int found = 0;
@@ -90,8 +123,10 @@ int signIN(char nombre[20], char passw[20], int edad){
 	}
 	if (!found){//en cas que user no es troba a BBDD l'afegim
 		sprintf(consulta,"INSERT INTO Jugadores VALUES (%d,'%s','%s', %d, 0);",id,nombre,passw,edad);
-		puts(consulta);					
+		puts(consulta);	
+		pthread_mutex_lock(&mutex); 
 		err = mysql_query(conn, consulta);
+		pthread_mutex_unlock(&mutex); 
 		if (err!=0) {
 			printf ("Error al introducir datos la base %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
@@ -100,7 +135,6 @@ int signIN(char nombre[20], char passw[20], int edad){
 	}else 
 		return -1;
 }
-
 int logIN(char nombre[20], char passw[20]){
 	sprintf (consulta,"SELECT psswrd FROM Jugadores WHERE username = '%s'", nombre); 
 	err=mysql_query (conn, consulta); 
@@ -119,7 +153,6 @@ int logIN(char nombre[20], char passw[20]){
 			return 0; 
 	}
 }
-
 void HacerConsulta(){
 	err=mysql_query (conn, consulta); 
 	if (err!=0) {
@@ -163,6 +196,7 @@ void *AtenderCliente(void *socket){
 	while (terminar ==0){
 		char nombre[20];
 		char passw[20];
+		char conectado[20];
 		int edad, id;
 		// Ahora recibimos la petici?n
 		ret=read(sock_conn,peticion, sizeof(peticion));
@@ -176,11 +210,15 @@ void *AtenderCliente(void *socket){
 		char *p = strtok( peticion, "/");
 		int codigo =  atoi (p); //obtenemos codigo del servicio
 		printf("codigo %d\n",codigo);
-		if (codigo ==0) //petici?n de desconexi?n
+		if (codigo ==0){ //petici?n de desconexi?n
 			terminar=1;
-		//sacar conectado
-		//funcion eliminar
-		else if(codigo ==1){	//peticion de darse de alta
+			int del = delLista(conectado);
+			if (del == -1)
+				printf("error en desconexion\n");
+			else
+				printf("%s se ha desconectado\n", conectado);
+		}
+		else if(codigo ==1){ //darse de alta
 			p = strtok( NULL, "/");
 			strcpy (nombre, p); 
 			p = strtok( NULL, "/");
@@ -194,7 +232,7 @@ void *AtenderCliente(void *socket){
 			else 
 				sprintf (respuesta,"Bienvenido %s, estas dado de alta con id: %d\n",nombre,id);
 		}
-		else if (codigo ==2){// iniciar sesion
+		else if (codigo ==2){ //iniciar sesion
 			p = strtok( NULL, "/");
 			strcpy (nombre, p);
 			p = strtok( NULL, "/");
@@ -202,6 +240,7 @@ void *AtenderCliente(void *socket){
 			int res = logIN(nombre, passw);
 			if(res == 0){
 				strcpy (respuesta, "ﾡBienvenod@!");
+				strcpy(conectado, nombre);
 				int add = addLista (nombre, sock_conn);
 				if (add == -1)
 					printf("lista llena\n");
@@ -238,8 +277,11 @@ void *AtenderCliente(void *socket){
 			sprintf (consulta, "%s%s';",consulta, nombre); 
 			HacerConsulta();
 		}
-		else if (codigo == 6){//lista de conectados
+		else if (codigo == 6){ //lista de conectados
 			DameLista (respuesta);
+		}
+		else if (codigo ==7){ //numero de peticiones
+			sprintf(respuesta, "%d",count); 
 		}
 		else
 				 printf("no hay consulta");
@@ -247,6 +289,11 @@ void *AtenderCliente(void *socket){
 		if (codigo !=0){ // enviamos la respuesta al cliente
 			printf ("Respuesta: %s\n", respuesta);
 			write (sock_conn,respuesta, strlen(respuesta));
+		}
+		if ((codigo!=0)&&(codigo!=7)){
+			pthread_mutex_lock(&mutex); //no interrumpir
+			count++;//modificacion estructura compartida
+			pthread_mutex_unlock(&mutex); //se puede interrumpir
 		}
 	}
 	close(sock_conn); // Se acabo el servicio para este cliente
@@ -272,12 +319,13 @@ int main(int argc, char *argv[]){
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	
-	if (listen(sock_listen, 10) < 0)
+	if (listen(sock_listen, 10) < 0) //
 		printf("Error en el Listen\n");
+	count =0;
 	int i;
 	int sockets[100];
 	pthread_t thread[100];
-	for (i=0;i<5;i++){	// Bucle infinito
+	for (i=0;i<5;i++){	// 5 conectados maximo
 		printf ("Escuchando\n");
 		sock_conn = accept(sock_listen, NULL, NULL);//socket que usaremos para este cliente
 		printf ("He recibido conexion\n");
