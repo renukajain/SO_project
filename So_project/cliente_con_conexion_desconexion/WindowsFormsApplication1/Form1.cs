@@ -20,12 +20,6 @@ namespace WindowsFormsApplication1
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-           
-        }
-
         private void button1_Click(object sender, EventArgs e)//establecer conexion
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
@@ -75,7 +69,11 @@ namespace WindowsFormsApplication1
                         byte[] msg2 = new byte[80];
                         server.Receive(msg2);
                         mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                        MessageBox.Show(mensaje);
+                        if (mensaje == "-1")
+                            MessageBox.Show("existe usuario con este nombre");
+                        else //if (mensaje[0]==0)
+                            MessageBox.Show("Añadid@ con socket"+mensaje);
+
                     }
                     else
                         MessageBox.Show("La contraseña no coincide");
@@ -101,6 +99,7 @@ namespace WindowsFormsApplication1
                 server.Send(msg);
 
                 // Nos desconectamos
+                conect = false;
                 this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
@@ -111,6 +110,8 @@ namespace WindowsFormsApplication1
         {
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
+            else if (id_in.Text == "" || passw_in.Text == "" )
+                MessageBox.Show("DATOS INCOMPLETOS");
             else
             {
                 string mensaje = "2/" + id_in.Text + "/" + passw_in.Text;
@@ -122,7 +123,14 @@ namespace WindowsFormsApplication1
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
                 mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                MessageBox.Show(mensaje);
+                if (mensaje == "0")
+                    MessageBox.Show("¡Bienvenid@!");
+                else if (mensaje == "-1")
+                    MessageBox.Show("lista llena");
+                else if (mensaje == "-2")
+                    MessageBox.Show("contraseña erronea");
+                else
+                    MessageBox.Show("no existe user");
             }
         }
 
@@ -149,7 +157,12 @@ namespace WindowsFormsApplication1
                             byte[] msg2 = new byte[80];
                             server.Receive(msg2);
                             mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                            MessageBox.Show(mensaje);
+                            if (mensaje == "-1")
+                                MessageBox.Show("no hay resultado");
+                            else if (mensaje == "-3")
+                                MessageBox.Show("error consultae");
+                            else
+                                MessageBox.Show(mensaje);
                         }catch(FormatException){
                             MessageBox.Show("formato campo id incorrecto");
                         }
@@ -165,7 +178,12 @@ namespace WindowsFormsApplication1
                         byte[] msg2 = new byte[80];
                         server.Receive(msg2);
                         mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                        MessageBox.Show(mensaje);
+                        if (mensaje == "-1")
+                            MessageBox.Show("no hay resultado");
+                        else if (mensaje == "-3")
+                            MessageBox.Show("error consultae");
+                        else
+                            MessageBox.Show(mensaje);
                     }
 
                     else if (radioButton3.Checked)// consulta 3 jusgadores que han perdido
@@ -179,7 +197,12 @@ namespace WindowsFormsApplication1
                         byte[] msg2 = new byte[80];
                         server.Receive(msg2);
                         mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                        MessageBox.Show(mensaje);
+                        if (mensaje == "-1")
+                            MessageBox.Show("no hay resultado");
+                        else if (mensaje == "-3")
+                            MessageBox.Show("error consultae");
+                        else
+                            MessageBox.Show(mensaje);
                     }
                     else
                         MessageBox.Show("selecciona cosulta");
@@ -223,36 +246,53 @@ namespace WindowsFormsApplication1
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
                 mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                MessageBox.Show(mensaje);
+                if (mensaje == "-1")
+                    MessageBox.Show("no hay conectados");
+                else 
+                    MessageBox.Show("lista" + mensaje);
             }
         }
 
         private void button7_Click(object sender, EventArgs e) //obtener numero de peticiones
         {
-            string mensaje = "7";
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            if (conect == false)
+                MessageBox.Show("NO HAY CONEXION");
+            else
+            {
+                string mensaje = "7";
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
 
-            //Recibimos la respuesta del servidor
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-            button7.Text = "num peticiones: "+ mensaje;
+                //Recibimos la respuesta del servidor
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+                button7.Text = "num peticiones: " + mensaje;
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            string mensaje = "8";
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            if (conect == false)
+                MessageBox.Show("NO HAY CONEXION");
+            else
+            {
+                string mensaje = "8";
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
 
-            //Recibimos la respuesta del servidor
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-            MessageBox.Show(mensaje);
-        }       
+                //Recibimos la respuesta del servidor
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+                if (mensaje == "-1")
+                    MessageBox.Show("no hay usuarios conectados");
+                else
+                    MessageBox.Show("lista" + mensaje);
+            }
+        }
+   
     }
 }
