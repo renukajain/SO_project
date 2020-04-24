@@ -190,7 +190,7 @@ void *AtenderCliente(void *socket){
 		printf ("Error al crear la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 		exit (1);
 	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql","Juego", 0, NULL, 0);
+	conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql","T8_BBDDJuego", 0, NULL, 0);
 	if (conn==NULL)
 	{
 		printf ("Error al inicializar la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -319,6 +319,7 @@ int main(int argc, char *argv[]){
 	miLista.num =0;
 	struct sockaddr_in serv_adr;
 	int sock_conn, sock_listen;
+	int puerto = 50073;
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -330,7 +331,7 @@ int main(int argc, char *argv[]){
 	// asocia el socket a cualquiera de las IP de la m?quina. 
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_adr.sin_port = htons(9050);// establecemos el puerto de escucha
+	serv_adr.sin_port = htons(puerto);// establecemos el puerto de escucha
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	

@@ -21,6 +21,38 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
+            button2.Visible = false;
+            button3.Visible = false;
+            button4.Visible = false;
+            button5.Visible = false;
+            button7.Visible = false;
+            button8.Visible = false;
+            groupBox1.Visible = false;
+            groupBox2.Visible = false;
+            groupBox3.Visible = false;
+            textBox1.Visible = false;
+            label7.Visible = false;
+
+        }
+        class Limpiar
+        {
+            public void BorrarTextBox(Control control, GroupBox gb)
+            {
+                foreach (var txt in control.Controls)
+                {
+                    if (txt is TextBox)
+                    {
+                        ((TextBox)txt).Clear();
+                    }
+                }
+                foreach (var combo in gb.Controls)
+                {
+                    if (combo is ComboBox)
+                    {
+                        ((ComboBox)combo).SelectedIndex = 0;
+                    }
+                }
+            }
         }
 
         private void AtenderServidor()
@@ -102,8 +134,8 @@ namespace WindowsFormsApplication1
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.101");
-            IPEndPoint ipep = new IPEndPoint(direc, 9050);
+            IPAddress direc = IPAddress.Parse("147.83.117.22");
+            IPEndPoint ipep = new IPEndPoint(direc, 50073);
             
 
             //Creamos el socket 
@@ -114,6 +146,17 @@ namespace WindowsFormsApplication1
                 this.BackColor = Color.Green;
                 MessageBox.Show("Conectado");
                 conect = true;
+                button2.Visible = true;
+                button3.Visible = true;
+                button4.Visible = true;
+                button5.Visible = true;
+                button7.Visible = true;
+                button8.Visible = true;
+                groupBox1.Visible = true;
+                groupBox2.Visible = true;
+                groupBox3.Visible = true;
+                textBox1.Visible = true;
+                label7.Visible = true;
             }
             catch (SocketException ex)
             {
@@ -153,6 +196,7 @@ namespace WindowsFormsApplication1
 
         private void button3_Click(object sender, EventArgs e)//desconexion
         {
+            Limpiar limpiar = new Limpiar();
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
             else
@@ -169,6 +213,7 @@ namespace WindowsFormsApplication1
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 conect = false;
+                limpiar.BorrarTextBox(this, groupBox1);
             }
         }
 
@@ -255,6 +300,41 @@ namespace WindowsFormsApplication1
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Nombre_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
