@@ -124,6 +124,19 @@ namespace WindowsFormsApplication1
                             else
                                 MessageBox.Show("lista" + trozos[1]);
                             break;
+                        case 9:
+                            string[] invitacion = mensaje.Split(',');
+                            int idPartida = Convert.ToInt32(invitacion[0]);
+                            string anfitrion = invitacion[1];
+                            string oponentes = "";
+                            for (int i = 2; i < invitacion.Length; i++)
+                            {
+                                if (invitacion[i] != this.Usuario.Text)
+                                {
+                                    oponentes = oponentes + invitacion[i] + ", ";
+                                }
+                            }
+                            break;
                     }
                 }
                 catch (FormatException) { }
@@ -222,7 +235,7 @@ namespace WindowsFormsApplication1
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
             else{
-                string mensaje = "2/" + id_in.Text + "/" + passw_in.Text;
+                string mensaje = "2/" + Usuario.Text + "/" + passw_in.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -333,6 +346,21 @@ namespace WindowsFormsApplication1
         }
 
         private void Nombre_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tBcons_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tBedad_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Usuario_TextChanged_1(object sender, EventArgs e)
         {
 
         }
