@@ -154,3 +154,5 @@ C:\Users\Andrea\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplicat
 C:\Users\Andrea\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
 C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\renuka\Desktop\so\repositorio\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\renuka\Desktop\so\repositorio\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb

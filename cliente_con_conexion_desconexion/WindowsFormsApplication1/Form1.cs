@@ -14,6 +14,8 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
+        //variables globales
+        int idPartida;
         Socket server;
         Thread atender;
         bool conect = false;
@@ -30,8 +32,9 @@ namespace WindowsFormsApplication1
             groupBox1.Visible = false;
             groupBox2.Visible = false;
             groupBox3.Visible = false;
-            textBox1.Visible = false;
+            listBox1.Visible = false;
             label7.Visible = false;
+            button6.Visible = false;
 
         }
         class Limpiar
@@ -53,6 +56,15 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
+        }
+
+        private void mostrarLista(string nombres){
+            string[] trozos = nombres.Split(' ');
+            listBox1.Items.Clear();
+            listBox1.BeginUpdate();
+            for (int x = 0; x < trozos.Length-1; x++)
+                listBox1.Items.Add(trozos[x]);
+            listBox1.EndUpdate();
         }
 
         private void AtenderServidor()
@@ -113,7 +125,7 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("Jugadores que han perdido:" + trozos[1]);
                             break;
                         case 6:
-                            textBox1.Text = trozos[1];
+                            mostrarLista(trozos[1]);
                             break;
                         case 7:
                             button7.Text = "num peticiones: " + trozos[1];
@@ -126,7 +138,7 @@ namespace WindowsFormsApplication1
                             break;
                         case 9:
                             string[] invitacion = mensaje.Split(',');
-                            int idPartida = Convert.ToInt32(invitacion[0]);
+                            idPartida = Convert.ToInt32(invitacion[0]);
                             string anfitrion = invitacion[1];
                             string oponentes = "";
                             for (int i = 2; i < invitacion.Length; i++)
@@ -148,7 +160,7 @@ namespace WindowsFormsApplication1
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50073);
+            IPEndPoint ipep = new IPEndPoint(direc, 50074);
             
 
             //Creamos el socket 
@@ -168,8 +180,10 @@ namespace WindowsFormsApplication1
                 groupBox1.Visible = true;
                 groupBox2.Visible = true;
                 groupBox3.Visible = true;
-                textBox1.Visible = true;
+                listBox1.Visible = true;
                 label7.Visible = true;
+                button6.Visible = true;
+
             }
             catch (SocketException ex)
             {
@@ -315,54 +329,15 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void button7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox3_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Nombre_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tBcons_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tBedad_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Usuario_TextChanged_1(object sender, EventArgs e)
-        {
-
+            string invitados = "/";
+            foreach (var item in listBox1.SelectedItems)
+            {
+                string[] nom = listBox1.GetItemText(item).Split('\n');
+                invitados += nom[0] + " ";
+            }
+            MessageBox.Show(invitados);
         }
     }
 }
