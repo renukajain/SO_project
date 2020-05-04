@@ -28,10 +28,14 @@ typedef struct {
 } ListaConectados;
 
 typedef struct {
-	Conectado jugadores[3];
-	int numJug;
+	char nombreJuador [20];
+	int id;
 } Partida;
-typedef Partida TablaPartidas[maxPartidas];
+
+typedef struct {
+	Partida partida [100];
+	int num;
+} ListaPartidas;
 
 ListaConectados miLista;
 TablaPartidas miTabla;
@@ -320,6 +324,17 @@ void *AtenderCliente(void *socket){
 		}
 		else if (codigo == 9) //Solicitud de invitacion
 		{
+			char invitados[100];
+			char *p = strtok(Null "/");
+			int num =  atoi (p);
+			for(int j =0; j<num;j++){
+				p = strtok( NULL, " ");
+				strcpy(invitados,p);
+				hacerInvitacion(invitados);
+
+			}
+
+			//esto es de aaron
 			char invitados[100];
 			p = strtok(NULL, "/");
 			strcpy(invitados, p);

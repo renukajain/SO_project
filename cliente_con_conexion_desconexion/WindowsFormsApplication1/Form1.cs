@@ -329,15 +329,19 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)//invitacion a partida
         {
+            int contador = 0;
             string invitados = "/";
-            foreach (var item in listBox1.SelectedItems)
-            {
+            foreach (var item in listBox1.SelectedItems){
+                contador++;
                 string[] nom = listBox1.GetItemText(item).Split('\n');
                 invitados += nom[0] + " ";
             }
-            MessageBox.Show(invitados);
+            string mensaje = "9/"+contador+ invitados;
+            // Enviamos al servidor el nombre tecleado
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
         }
     }
 }
