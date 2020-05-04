@@ -325,7 +325,7 @@ void *AtenderCliente(void *socket){
 		else if (codigo == 9) //Solicitud de invitacion
 		{
 			char invitados[100];
-			char *p = strtok(Null "/");
+			char *p = strtok(NULL, "/");
 			int num =  atoi (p);
 			for(int j =0; j<num;j++){
 				p = strtok( NULL, " ");
