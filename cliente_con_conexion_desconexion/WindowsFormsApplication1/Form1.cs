@@ -137,17 +137,22 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("lista" + trozos[1]);
                             break;
                         case 9:
-                            string[] invitacion = mensaje.Split(',');
-                            idPartida = Convert.ToInt32(invitacion[0]);
-                            string anfitrion = invitacion[1];
-                            string oponentes = "";
-                            for (int i = 2; i < invitacion.Length; i++)
+                            byte[] msg;
+                            string anfitrion = trozos[1];
+                            string caption = trozos[1] + " te esta invitando a la partida";
+                            switch (MessageBox.Show("Aceptar invitacion?",caption,MessageBoxButtons.YesNo,MessageBoxIcon.Question))
                             {
-                                if (invitacion[i] != this.Usuario.Text)
-                                {
-                                    oponentes = oponentes + invitacion[i] + ", ";
-                                }
+                                case DialogResult.Yes:
+                                    msg = System.Text.Encoding.ASCII.GetBytes("10/s");
+                                    server.Send(msg);
+                                    break;
+                                case DialogResult.No:
+                                    msg = System.Text.Encoding.ASCII.GetBytes("10/n");
+                                    server.Send(msg);
+                                    break;
+
                             }
+                            
                             break;
                     }
                 }

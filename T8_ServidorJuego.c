@@ -206,6 +206,24 @@ void Consulta3(char nombre[20], char respuesta[200]){
 	HacerConsulta(consulta, respuesta);
 }
 
+int dameSocket(char nombre[20]){
+int i=0;
+	while (i<miLista.num){
+		if (strmcp(miLista.conectados[i].nombre,nombre)==0)
+			return miLista.conectados[i].socket;
+		i++;
+	}
+
+}
+void hacerInvitacion(char nombre[20],char nombre_anf[20]){
+char respuesta[200];
+int sock_inv= dameSocket(nombre);
+int pos = DamePos(sock_conn);
+strcpy(nombre_anf, miLista.conectados[pos].nombre);
+sprintf(respuesta,"9/%s",nombre_anf);
+write(sock_inv, respuesta, strlen(respuesta));
+}
+
 void *AtenderCliente(void *socket){
 	int sock_conn;
 	int *s;
@@ -325,7 +343,7 @@ void *AtenderCliente(void *socket){
 		else if (codigo == 9) //Solicitud de invitacion
 		{
 			char invitados[100];
-			char *p = strtok(NULL, "/");
+			p = strtok(NULL, "/");
 			int num =  atoi (p);
 			for(int j =0; j<num;j++){
 				p = strtok( NULL, " ");
@@ -361,6 +379,14 @@ void *AtenderCliente(void *socket){
 				}
 				printf("Invitaciones enviadas. Esperando confirmaciones...\n");
 			}
+		}
+
+		else if(codigo==10){
+		p = strtok( NULL, "/");
+		
+		if(strcmp("s",p)==0)
+			
+		
 		}		
 			
 			
