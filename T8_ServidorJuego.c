@@ -28,17 +28,19 @@ typedef struct {
 } ListaConectados;
 
 typedef struct {
-	char nombreJuador [20];
+	Conectado jugador [2];
 	int id;
+	int numj;
+	int llena;
 } Partida;
 
 typedef struct {
-	Partida partida [100];
-	int num;
+	Partida partida [maxPartidas];
+	int nump;
 } ListaPartidas;
 
 ListaConectados miLista;
-TablaPartidas miTabla;
+ListaPartidas miTabla;
 
 MYSQL *conn;
 
@@ -157,12 +159,61 @@ int logIN(char nombre[20], char passw[20]){
 	}
 }
 
-/*int InsertarPartida(char anfitrion[20], char invitados[100])
+int dameSocket(char nombre[20]){
+	int i=0;
+	while (i<miLista.num){
+		if (strcmp(miLista.conectados[i].nombre,nombre)==0)
+			return miLista.conectados[i].socket;
+		i++;
+	}
+}
+
+int InsertarPartida(char anfitrion[20], char invitados[100])
 {
+	int cont = 1;
 	char jugador2[20];
 	char jugador3[20];
 
-}*/
+	char *v = strtok(invitados, ",");
+
+	if (v != NULL)
+	{
+		cont++;
+		strcpy(jugador2, v);
+		v = strtok(NULL, ",");
+	}
+	if (v != NULL)
+	{
+		cont++;
+		strcpy(jugador3, v);
+		v = strtok(NULL, ",");
+	}
+	for (int i = 0; i < maxPartidas; i++)
+	{
+		if (miTabla.partida[i].llena == 0)
+		{
+			strcpy(miTabla.partida[i].jugador[0].nombre, anfitrion);
+			miTabla.partida[i].jugador[0].socket = dameSocket(anfitrion);
+			
+			if (cont > 1)
+			{
+				strcpy(miTabla.partida[i].jugador[1].nombre, jugador2);
+				miTabla.partida[i].jugador[1].socket = dameSocket(jugador2);
+			}
+			if (cont > 2)
+			{
+				strcpy(miTabla.partida[i].jugador[2].nombre, jugador3);
+				miTabla.partida[i].jugador[2].socket = dameSocket(jugador3);			
+			}
+			miTabla.partida[i].llena = 1;
+			miTabla.partida[i].numj = cont;
+			miTabla.partida[i].id = i;
+			
+			return i;
+		}
+	}
+	return -1;
+}
 	
 void HacerConsulta(char consulta[512], char respuesta[200]){
 	MYSQL_RES *resultado;
@@ -206,22 +257,12 @@ void Consulta3(char nombre[20], char respuesta[200]){
 	HacerConsulta(consulta, respuesta);
 }
 
-int dameSocket(char nombre[20]){
-int i=0;
-	while (i<miLista.num){
-		if (strmcp(miLista.conectados[i].nombre,nombre)==0)
-			return miLista.conectados[i].socket;
-		i++;
-	}
 
-}
 void hacerInvitacion(char nombre[20],char nombre_anf[20]){
-char respuesta[200];
-int sock_inv= dameSocket(nombre);
-int pos = DamePos(sock_conn);
-strcpy(nombre_anf, miLista.conectados[pos].nombre);
-sprintf(respuesta,"9/%s",nombre_anf);
-write(sock_inv, respuesta, strlen(respuesta));
+	char respuesta[200];
+	int sock_inv= dameSocket(nombre);
+	sprintf(respuesta,"9/%s",nombre_anf);
+	write(sock_inv, respuesta, strlen(respuesta));
 }
 
 void *AtenderCliente(void *socket){
@@ -342,26 +383,23 @@ void *AtenderCliente(void *socket){
 		}
 		else if (codigo == 9) //Solicitud de invitacion
 		{
+			/*
 			char invitados[100];
+			char invitacion[20];
 			p = strtok(NULL, "/");
 			int num =  atoi (p);
 			for(int j =0; j<num;j++){
-				p = strtok( NULL, " ");
+				p = strtok( NULL, ",");
 				strcpy(invitados,p);
-				hacerInvitacion(invitados);
-
-			}
+				hacerInvitacion(invitados, conectado);
+			}*/
 
 			//esto es de aaron
 			char invitados[100];
 			p = strtok(NULL, "/");
 			strcpy(invitados, p);
 			
-			char nombre[20]; //nombre en variable conectado
-			int pos = DamePos(sock_conn);
-			strcpy(nombre, miLista.conectados[pos].nombre);
-			
-			int posp = InsertarPartida(nombre, invitados);
+			int posp = InsertarPartida(conectado, invitados);
 			
 			if (posp == -1)
 				printf("Error: No hay partidas disponibles\n");
@@ -370,24 +408,25 @@ void *AtenderCliente(void *socket){
 				printf("Partida agregada. ID de partida: %d\n", posp);
 				
 				char invitacion[100];
+				int numjugadores = miTabla.partida[posp].numj;
 				
-				sprintf(invitacion, "9/%d,%s,%s", posp, nombre, invitados);
-				for (int i = 0; i < miTabla[posp].numJug; i++)
+				sprintf(invitacion, "9/%d,%s,%s", posp, conectado, invitados);
+				for (int i = 0; i < numjugadores; i++)
 				{
-					if (miTabla[posp].jugadores[i].socket != sock_conn)
-						write(miTabla[posp].jugadores[i].socket, invitacion, strlen(invitacion));
+					if (miTabla.partida[posp].jugador[i].socket != sock_conn)
+						write(miTabla.partida[posp].jugador[i].socket, invitacion, strlen(invitacion));
 				}
 				printf("Invitaciones enviadas. Esperando confirmaciones...\n");
 			}
 		}
 
-		else if(codigo==10){
+		/*else if(codigo==10){
 		p = strtok( NULL, "/");
 		
 		if(strcmp("s",p)==0)
 			
 		
-		}		
+		}	*/	
 			
 			
 		else
@@ -408,7 +447,8 @@ void *AtenderCliente(void *socket){
 		}
 	}
 	close(sock_conn); // Se acabo el servicio para este cliente
-	//mysql_close (conn);
+	if (miLista.num == 0)
+		mysql_close (conn);
 }
 
 int main(int argc, char *argv[]){ 
@@ -448,6 +488,6 @@ int main(int argc, char *argv[]){
 			i++;
 		}
 	}
-	mysql_close (conn);
+	//mysql_close (conn);
 	//exit(0);
 }
