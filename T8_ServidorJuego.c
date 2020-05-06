@@ -9,33 +9,26 @@
 #include <pthread.h>
 #include <ctype.h>
 
-#define port 50073
-#define mysql_direc "shiva2.upc.es"
-#define mysql_user "root"
-#define mysql_pass "mysql"
-#define mysql_ddbb "T8_BBDDJuego"
-#define maxConectados 100
-#define maxPartidas 25
-
 typedef struct {
 	char nombre [20];
 	int socket;
 } Conectado;
 
 typedef struct {
-	Conectado conectados [maxConectados];
+	Conectado conectados [100];
 	int num;
 } ListaConectados;
 
 typedef struct {
-	Conectado jugador [2];
-	int id;
-	int numj;
-	int llena;
+	Conectado jugador [4]; //invitados a partida
+	Conectado creador; //creador de partida
+	int id; //identifiador partida
+	int numj; //numero de jugadores
+	int llena; //1 si todos han aceptado
 } Partida;
 
 typedef struct {
-	Partida partida [maxPartidas];
+	Partida partida [100];
 	int nump;
 } ListaPartidas;
 
@@ -52,8 +45,17 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;//ACCESO EXLUYENTE
 int DamePos(int socket){
 	int i=0;
 	while (i<miLista.num){
-		if (miLista.conectados[i].socket == socket)
+		if (miLista.conectados[i].socket ==socket)
 			return i;
+		i++;
+	}
+	return -1;
+}
+int DameSock(char nombre[200]){
+	int i=0;
+	while (i<miLista.num){
+		if (strcmp(miLista.conectados[i].nombre, nombre) ==0)
+			return miLista.conectados[i].socket;
 		i++;
 	}
 	return -1;
@@ -89,7 +91,7 @@ void DameLista (char respuesta[512]){
 		sprintf (respuesta, "-1");
 	else {
 		for (int i=0;i<miLista.num;i++)
-			sprintf (respuesta, "%s, %s\n ", respuesta, miLista.conectados[i].nombre);
+			sprintf (respuesta, "%s%s\n ", respuesta, miLista.conectados[i].nombre);
 	}
 }
 void DameListaSockets (char respuesta[512]){
@@ -133,8 +135,7 @@ int signIN(char nombre[20], char passw[20], int edad){
 			exit (1);
 		}
 		return id;
-	}
-	else 
+	}else 
 		return -1;
 }
 int logIN(char nombre[20], char passw[20]){
@@ -158,63 +159,6 @@ int logIN(char nombre[20], char passw[20]){
 		   return 0; 
 	}
 }
-
-int dameSocket(char nombre[20]){
-	int i=0;
-	while (i<miLista.num){
-		if (strcmp(miLista.conectados[i].nombre,nombre)==0)
-			return miLista.conectados[i].socket;
-		i++;
-	}
-}
-
-int InsertarPartida(char anfitrion[20], char invitados[100])
-{
-	int cont = 1;
-	char jugador2[20];
-	char jugador3[20];
-
-	char *v = strtok(invitados, ",");
-
-	if (v != NULL)
-	{
-		cont++;
-		strcpy(jugador2, v);
-		v = strtok(NULL, ",");
-	}
-	if (v != NULL)
-	{
-		cont++;
-		strcpy(jugador3, v);
-		v = strtok(NULL, ",");
-	}
-	for (int i = 0; i < maxPartidas; i++)
-	{
-		if (miTabla.partida[i].llena == 0)
-		{
-			strcpy(miTabla.partida[i].jugador[0].nombre, anfitrion);
-			miTabla.partida[i].jugador[0].socket = dameSocket(anfitrion);
-			
-			if (cont > 1)
-			{
-				strcpy(miTabla.partida[i].jugador[1].nombre, jugador2);
-				miTabla.partida[i].jugador[1].socket = dameSocket(jugador2);
-			}
-			if (cont > 2)
-			{
-				strcpy(miTabla.partida[i].jugador[2].nombre, jugador3);
-				miTabla.partida[i].jugador[2].socket = dameSocket(jugador3);			
-			}
-			miTabla.partida[i].llena = 1;
-			miTabla.partida[i].numj = cont;
-			miTabla.partida[i].id = i;
-			
-			return i;
-		}
-	}
-	return -1;
-}
-	
 void HacerConsulta(char consulta[512], char respuesta[200]){
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
@@ -257,14 +201,6 @@ void Consulta3(char nombre[20], char respuesta[200]){
 	HacerConsulta(consulta, respuesta);
 }
 
-
-void hacerInvitacion(char nombre[20],char nombre_anf[20]){
-	char respuesta[200];
-	int sock_inv= dameSocket(nombre);
-	sprintf(respuesta,"9/%s",nombre_anf);
-	write(sock_inv, respuesta, strlen(respuesta));
-}
-
 void *AtenderCliente(void *socket){
 	int sock_conn;
 	int *s;
@@ -277,7 +213,7 @@ void *AtenderCliente(void *socket){
 		printf ("Error al crear la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 		exit (1);
 	}
-	conn = mysql_real_connect (conn, "mysql_direc","mysql_user", "mysql_pass","mysql_ddbb", 0, NULL, 0);
+	conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql","T8_BBDDJuego", 0, NULL, 0);
 	if (conn==NULL)
 	{
 		printf ("Error al inicializar la conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
@@ -381,60 +317,28 @@ void *AtenderCliente(void *socket){
 			DameListaSockets (noms);
 			strcpy(respuesta, noms);
 		}
-		else if (codigo == 9) //Solicitud de invitacion
-		{
-			/*
-			char invitados[100];
-			char invitacion[20];
+		else if (codigo==9){
+			miTabla.partida[miTabla.nump].id = miTabla.nump;
+			strcpy(miTabla.partida[miTabla.nump].creador.nombre,conectado);
+			miTabla.partida[miTabla.nump].creador.socket=sock_conn;
 			p = strtok(NULL, "/");
 			int num =  atoi (p);
+			char invitado[20];
+			sprintf (respuesta, "9/%d/%s", miTabla.nump, conectado);
 			for(int j =0; j<num;j++){
 				p = strtok( NULL, ",");
-				strcpy(invitados,p);
-				hacerInvitacion(invitados, conectado);
-			}*/
-
-			//esto es de aaron
-			char invitados[100];
-			p = strtok(NULL, "/");
-			strcpy(invitados, p);
-			
-			int posp = InsertarPartida(conectado, invitados);
-			
-			if (posp == -1)
-				printf("Error: No hay partidas disponibles\n");
-			else
-			{
-				printf("Partida agregada. ID de partida: %d\n", posp);
-				
-				char invitacion[100];
-				int numjugadores = miTabla.partida[posp].numj;
-				
-				sprintf(invitacion, "9/%d,%s,%s", posp, conectado, invitados);
-				for (int i = 0; i < numjugadores; i++)
-				{
-					if (miTabla.partida[posp].jugador[i].socket != sock_conn)
-						write(miTabla.partida[posp].jugador[i].socket, invitacion, strlen(invitacion));
-				}
-				printf("Invitaciones enviadas. Esperando confirmaciones...\n");
+				strcpy(invitado,p);
+				miTabla.partida[miTabla.nump].jugador[j] = miLista.conectados[DamePos(DameSock(invitado))];
+				write(DameSock(invitado), respuesta, strlen(respuesta));
 			}
+			miTabla.nump++;
 		}
-
-		/*else if(codigo==10){
-		p = strtok( NULL, "/");
-		
-		if(strcmp("s",p)==0)
-			
-		
-		}	*/	
-			
-			
 		else
-				 printf("No hay consulta");
+				 printf("no hay consulta");
 		
 		if ((codigo==1)||(codigo==2)||(codigo==3)||(codigo==4)||(codigo==5)||(codigo==8)){ // enviamos la respuesta al cliente
 			printf ("Respuesta: %s\n", respuesta);
-			write (sock_conn, respuesta, strlen(respuesta));
+			write (sock_conn,respuesta, strlen(respuesta));
 		}
 		if ((codigo!=0)&&(codigo!=7)&&(codigo!=8)&&(codigo!=6)){
 			pthread_mutex_lock(&mutex); //no interrumpir
@@ -443,18 +347,19 @@ void *AtenderCliente(void *socket){
 			char noms[200];
 			sprintf(noms, "7/%d", count);//codigo numero de peticiones
 			for(int j=0;j<miLista.num;j++)
-				write (miLista.conectados[j].socket, noms, strlen(noms));
+				write (miLista.conectados[j].socket,noms, strlen(noms));
 		}
 	}
 	close(sock_conn); // Se acabo el servicio para este cliente
-	if (miLista.num == 0)
-		mysql_close (conn);
+	//mysql_close (conn);
 }
 
 int main(int argc, char *argv[]){ 
 	miLista.num =0;
+	miTabla.nump=0;
 	struct sockaddr_in serv_adr;
 	int sock_conn, sock_listen;
+	int puerto = 50074;
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -466,7 +371,7 @@ int main(int argc, char *argv[]){
 	// asocia el socket a cualquiera de las IP de la m?quina. 
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_adr.sin_port = htons(port);// establecemos el puerto de escucha
+	serv_adr.sin_port = htons(puerto);// establecemos el puerto de escucha
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind\n");
 	
@@ -488,6 +393,5 @@ int main(int argc, char *argv[]){
 			i++;
 		}
 	}
-	//mysql_close (conn);
-	//exit(0);
+	exit(0);
 }
