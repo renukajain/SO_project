@@ -14,8 +14,6 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
-        //variables globales
-        int idPartida;
         Socket server;
         Thread atender;
         bool conect = false;
@@ -34,37 +32,48 @@ namespace WindowsFormsApplication1
             groupBox3.Visible = false;
             listBox1.Visible = false;
             label7.Visible = false;
+            label8.Visible = false;
             button6.Visible = false;
 
         }
-        class Limpiar
-        {
-            public void BorrarTextBox(Control control, GroupBox gb)
-            {
-                foreach (var txt in control.Controls)
-                {
+        class Limpiar{
+            public void BorrarTextBox(Control control, GroupBox gb){
+                foreach (var txt in control.Controls){
                     if (txt is TextBox)
-                    {
                         ((TextBox)txt).Clear();
-                    }
                 }
-                foreach (var combo in gb.Controls)
-                {
+                foreach (var combo in gb.Controls){
                     if (combo is ComboBox)
-                    {
                         ((ComboBox)combo).SelectedIndex = 0;
-                    }
                 }
             }
         }
 
-        private void mostrarLista(string nombres){
+        private void mostrarLista(string nombres)
+        {
             string[] trozos = nombres.Split(' ');
             listBox1.Items.Clear();
             listBox1.BeginUpdate();
             for (int x = 0; x < trozos.Length-1; x++)
                 listBox1.Items.Add(trozos[x]);
             listBox1.EndUpdate();
+        }
+
+        private void enviarConfi(string anfitrion, int partida)
+        {
+            string mensaje;
+            string caption = anfitrion + " te esta invitando a la partida "+ partida;
+            switch (MessageBox.Show("Aceptas la invitación?", caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                case DialogResult.Yes:
+                    mensaje = "/2"; //para confirmar que se ha respondido y aceptado
+                    break;
+                default:
+                    mensaje = "/1";//para para confirmar que se ha respondido pero NO aceptado
+                    break;
+            }
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes("10/"+partida+mensaje);
+            server.Send(msg);
         }
 
         private void AtenderServidor()
@@ -137,44 +146,28 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("lista" + trozos[1]);
                             break;
                         case 9:
-                            byte[] msg;
-                            string[] invitacion = mensaje.Split(',');
-                            int idPartida = Convert.ToInt32(invitacion[0]);       
-                            string anfitrion = invitacion[1];
-                            string oponentes = "";
-                            for (int i = 2; i < invitacion.Length; i++)
-                            {
-                                if (invitacion[i] != this.Usuario.Text)
-                                {
-                                    oponentes += invitacion[i] + ", ";
-                                }
-                            }
-                            string caption = anfitrion + " te esta invitando a la partida";
-                            switch (MessageBox.Show("Aceptas la invitación?",caption,MessageBoxButtons.YesNo,MessageBoxIcon.Question))
-                            {
-                                case DialogResult.Yes:
-                                    msg = System.Text.Encoding.ASCII.GetBytes("10/s");
-                                    server.Send(msg);
-                                    break;
-                                case DialogResult.No:
-                                    msg = System.Text.Encoding.ASCII.GetBytes("10/n");
-                                    server.Send(msg);
-                                    break;
-                            }
-                            
+                            label8.Text="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
+                            enviarConfi(trozos[2], Convert.ToInt16(trozos[1]));
                             break;
+                        case 10:
+                            if (trozos[2] == "0")
+                                label8.Text = "Todos han aceptado la partida " + trozos[1];
+                            else
+                                label8.Text= "alguien no ha aceptado la partida " + trozos[1];
+                            break;
+
                     }
                 }
-                catch (FormatException) { }
+                catch (FormatException){ }
             }
         }
 
         private void button1_Click(object sender, EventArgs e)//establecer conexion
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
-            //al que deseamos conectarnos
+            //al que deseamos conectarnos    
             IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50073);
+            IPEndPoint ipep = new IPEndPoint(direc, 50074);
             
 
             //Creamos el socket 
@@ -197,6 +190,7 @@ namespace WindowsFormsApplication1
                 listBox1.Visible = true;
                 label7.Visible = true;
                 button6.Visible = true;
+                label8.Visible = true;
 
             }
             catch (SocketException ex)
@@ -263,7 +257,7 @@ namespace WindowsFormsApplication1
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
             else{
-                string mensaje = "2/" + Usuario.Text + "/" + passw_in.Text;
+                string mensaje = "2/" + id_in.Text + "/" + passw_in.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -334,8 +328,7 @@ namespace WindowsFormsApplication1
         {
             if (conect == false)
                 MessageBox.Show("NO SE HA REALIZADO CONEXION");
-            else
-            {
+            else{
                 string mensaje = "8";
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -343,29 +336,19 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)//invitacion a partida
-        {
+        private void button6_Click(object sender, EventArgs e){
             int contador = 0;
             string invitados = "/";
-            foreach (var item in listBox1.SelectedItems){
+            foreach (var item in listBox1.SelectedItems)
+            {
                 contador++;
                 string[] nom = listBox1.GetItemText(item).Split('\n');
                 invitados += nom[0] + ",";
             }
-            string mensaje = "9/"+contador+ invitados;
+            string mensaje = "9/" + contador + invitados;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Usuario_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
