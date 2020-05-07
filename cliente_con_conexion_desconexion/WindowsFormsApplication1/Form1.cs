@@ -139,9 +139,10 @@ namespace WindowsFormsApplication1
                         case 9:
                             byte[] msg;
                             string[] invitacion = mensaje.Split(',');
-                            int idPartida = Convert.ToInt32(invitacion[0]);       
+                            idPartida = Convert.ToInt32(invitacion[0]);       
                             string anfitrion = invitacion[1];
                             string oponentes = "";
+                            MessageBox.Show(mensaje);
                             for (int i = 2; i < invitacion.Length; i++)
                             {
                                 if (invitacion[i] != this.Usuario.Text)
@@ -173,8 +174,8 @@ namespace WindowsFormsApplication1
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50073);
+            IPAddress direc = IPAddress.Parse("192.168.56.101");
+            IPEndPoint ipep = new IPEndPoint(direc, 9500);
             
 
             //Creamos el socket 
@@ -352,7 +353,7 @@ namespace WindowsFormsApplication1
                 string[] nom = listBox1.GetItemText(item).Split('\n');
                 invitados += nom[0] + ",";
             }
-            string mensaje = "9/"+contador+ invitados;
+            string mensaje = "9"+ invitados;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
