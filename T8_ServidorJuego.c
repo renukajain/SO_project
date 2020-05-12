@@ -389,7 +389,7 @@ int main(int argc, char *argv[]){
 	miTabla.nump=0;
 	struct sockaddr_in serv_adr;
 	int sock_conn, sock_listen;
-	int puerto = 50073;
+	int puerto = 50074;
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)

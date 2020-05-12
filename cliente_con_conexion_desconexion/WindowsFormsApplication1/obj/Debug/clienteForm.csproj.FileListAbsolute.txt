@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 D:\copia\docencia\SO\SocketsenC\EjercicioParaClase\pruebaSockets\cliente\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
 D:\copia\docencia\SO\SocketsenC\EjercicioParaClase\pruebaSockets\cliente\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
 D:\copia\docencia\SO\SocketsenC\EjercicioParaClase\pruebaSockets\cliente\WindowsFormsApplication1\obj\Debug\ResolveAssemblyReference.cache
@@ -168,3 +169,9 @@ C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\W
 C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
 C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
+=======
+C:\Users\Miguel Rincon\Downloads\So\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\Miguel Rincon\Downloads\So\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+>>>>>>> master
+C:\Users\renuka\Desktop\repositorio\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\renuka\Desktop\repositorio\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb

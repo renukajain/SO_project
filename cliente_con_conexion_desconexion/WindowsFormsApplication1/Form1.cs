@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -42,13 +42,17 @@ namespace WindowsFormsApplication1
             //textBox1.Visible = false;
 
         }
-        class Limpiar{
-            public void BorrarTextBox(Control control, GroupBox gb){
-                foreach (var txt in control.Controls){
+        class Limpiar
+        {
+            public void BorrarTextBox(Control control, GroupBox gb)
+            {
+                foreach (var txt in control.Controls)
+                {
                     if (txt is TextBox)
                         ((TextBox)txt).Clear();
                 }
-                foreach (var combo in gb.Controls){
+                foreach (var combo in gb.Controls)
+                {
                     if (combo is ComboBox)
                         ((ComboBox)combo).SelectedIndex = 0;
                 }
@@ -60,7 +64,7 @@ namespace WindowsFormsApplication1
             string[] trozos = nombres.Split(' ');
             listBox1.Items.Clear();
             listBox1.BeginUpdate();
-            for (int x = 0; x < trozos.Length-1; x++)
+            for (int x = 0; x < trozos.Length - 1; x++)
                 listBox1.Items.Add(trozos[x]);
             listBox1.EndUpdate();
         }
@@ -68,7 +72,7 @@ namespace WindowsFormsApplication1
         private void enviarConfi(string anfitrion, int partida)
         {
             string mensaje;
-            string caption = anfitrion + " te esta invitando a la partida "+ partida;
+            string caption = anfitrion + " te esta invitando a la partida " + partida;
             switch (MessageBox.Show("Aceptas la invitación?", caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
                 case DialogResult.Yes:
@@ -78,7 +82,7 @@ namespace WindowsFormsApplication1
                     mensaje = "/1";//para para confirmar que se ha respondido pero NO aceptado
                     break;
             }
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes("10/"+partida+mensaje);
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes("10/" + partida + mensaje);
             server.Send(msg);
         }
 
@@ -101,7 +105,7 @@ namespace WindowsFormsApplication1
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
                 string mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                string [] trozos = mensaje.Split('/');
+                string[] trozos = mensaje.Split('/');
                 try
                 {
                     int cod = Convert.ToInt16(trozos[0]);
@@ -112,7 +116,7 @@ namespace WindowsFormsApplication1
                             if (trozos[1] == "-1")
                                 MessageBox.Show("existe usuario con este nombre");
                             else if (trozos[1] == "0")
-                                MessageBox.Show(trozos[3]+" añadid@ con id "+trozos[2]);
+                                MessageBox.Show(trozos[3] + " añadid@ con id " + trozos[2]);
                             break;
                         case 2://log in
                             if (trozos[1] == "0")
@@ -124,8 +128,8 @@ namespace WindowsFormsApplication1
                             else if (trozos[1] == "-3")
                                 MessageBox.Show("no existe user");
                             //else
-                                //MessageBox.Show("¡Bienvenid@!");
-                                break;
+                            //MessageBox.Show("¡Bienvenid@!");
+                            break;
                         case 3:
                             if (trozos[1] == "-1")
                                 MessageBox.Show("no hay resultado");
@@ -164,7 +168,7 @@ namespace WindowsFormsApplication1
                             break;
                         case 9:
                             idPartida = Convert.ToInt16(trozos[1]);
-                            label8.Text="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
+                            label8.Text = "has sido invitado a partida id " + trozos[1] + " por " + trozos[2];
                             enviarConfi(trozos[2], Convert.ToInt16(trozos[1]));
                             break;
                         case 10:
@@ -184,7 +188,7 @@ namespace WindowsFormsApplication1
 
                     }
                 }
-                catch (FormatException){ }
+                catch (FormatException) { }
             }
         }
 
@@ -194,7 +198,7 @@ namespace WindowsFormsApplication1
             //al que deseamos conectarnos    
             IPAddress direc = IPAddress.Parse("147.83.117.22");
             IPEndPoint ipep = new IPEndPoint(direc, 50074);
-            
+
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -227,7 +231,7 @@ namespace WindowsFormsApplication1
             }
 
             ThreadStart ts = delegate { AtenderServidor(); };
-            atender  = new Thread (ts);
+            atender = new Thread(ts);
             atender.Start();
 
         }
@@ -238,22 +242,28 @@ namespace WindowsFormsApplication1
                 MessageBox.Show("NO SE HA REALIZADO CONEXION");
             else if (Nombre.Text == "" || passwBox.Text == "" || tBedad.Text == "")
                 MessageBox.Show("DATOS INCOMPLETOS");
-            else{
-                try{
+            else
+            {
+                try
+                {
                     int EDAD = Convert.ToInt16(tBedad.Text);
                     string mensaje = "1/" + Nombre.Text + "/" + passwBox.Text + "/" + tBedad.Text;
                     // Enviamos al servidor el nombre tecleado
-                    if (passwBox.Text.Equals(comppasswBox.Text)){
+                    if (passwBox.Text.Equals(comppasswBox.Text))
+                    {
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                         server.Send(msg);
-                    }else
+                    }
+                    else
                         MessageBox.Show("La contraseña no coincide");
-                }catch (FormatException){
+                }
+                catch (FormatException)
+                {
                     MessageBox.Show("FORMATO DEL CAMPO EDAD INCORRECTO");
                 }
             }
         }
-                        
+
 
         private void button3_Click(object sender, EventArgs e)//desconexion
         {
@@ -282,7 +292,8 @@ namespace WindowsFormsApplication1
         {
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
-            else{
+            else
+            {
                 string mensaje = "2/" + id_in.Text + "/" + passw_in.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -300,24 +311,30 @@ namespace WindowsFormsApplication1
                     MessageBox.Show("introduce datos necesarios para realizar consulta");
                 else
                 {
-                    if (radioButton1.Checked){//CONSULTA 1 NOMBRE JUGADORES MENORES DE EDAD
-                        try{
+                    if (radioButton1.Checked)
+                    {//CONSULTA 1 NOMBRE JUGADORES MENORES DE EDAD
+                        try
+                        {
                             int id = (Convert.ToInt16(tBcons.Text));
                             string mensaje = "3/" + tBcons.Text;
                             // Enviamos al servidor el nombre tecleado
                             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                             server.Send(msg);
-                        }catch(FormatException){
+                        }
+                        catch (FormatException)
+                        {
                             MessageBox.Show("formato campo id incorrecto");
                         }
                     }
-                    else if (radioButton2.Checked){//consulta 2 ciudad en las que ha jugado "username"
+                    else if (radioButton2.Checked)
+                    {//consulta 2 ciudad en las que ha jugado "username"
                         string mensaje = "4/" + tBcons.Text;
                         // Enviamos al servidor el nombre tecleado
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                         server.Send(msg);
                     }
-                    else if (radioButton3.Checked){// consulta 3 jusgadores que han perdido
+                    else if (radioButton3.Checked)
+                    {// consulta 3 jusgadores que han perdido
                         string mensaje = "5/" + tBcons.Text;
                         // Enviamos al servidor el nombre tecleado
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -354,7 +371,8 @@ namespace WindowsFormsApplication1
         {
             if (conect == false)
                 MessageBox.Show("NO SE HA REALIZADO CONEXION");
-            else{
+            else
+            {
                 string mensaje = "8";
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -362,7 +380,8 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void button6_Click(object sender, EventArgs e){
+        private void button6_Click(object sender, EventArgs e)
+        {
             int contador = 0;
             string invitados = "/";
             foreach (var item in listBox1.SelectedItems)
@@ -379,7 +398,7 @@ namespace WindowsFormsApplication1
 
         private void button9_Click(object sender, EventArgs e)
         {
-            string mensaje = "11/" + Convert.ToString(idPartida) +"/" + textBox1.Text;
+            string mensaje = "11/" + Convert.ToString(idPartida) + "/" + textBox1.Text;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
