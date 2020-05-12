@@ -58,6 +58,9 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button6 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.button9 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -65,17 +68,17 @@
             // 
             // Nombre
             // 
-            this.Nombre.Location = new System.Drawing.Point(116, 31);
+            this.Nombre.Location = new System.Drawing.Point(116, 19);
             this.Nombre.Name = "Nombre";
-            this.Nombre.Size = new System.Drawing.Size(164, 20);
+            this.Nombre.Size = new System.Drawing.Size(121, 20);
             this.Nombre.TabIndex = 3;
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(25, 18);
+            this.button1.Location = new System.Drawing.Point(12, 7);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(149, 31);
+            this.button1.Size = new System.Drawing.Size(107, 31);
             this.button1.TabIndex = 4;
             this.button1.Text = "conectar";
             this.button1.UseVisualStyleBackColor = true;
@@ -83,7 +86,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(124, 157);
+            this.button2.Location = new System.Drawing.Point(64, 123);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -103,9 +106,9 @@
             this.groupBox1.Controls.Add(this.passwBox);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.Nombre);
-            this.groupBox1.Location = new System.Drawing.Point(23, 67);
+            this.groupBox1.Location = new System.Drawing.Point(10, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(296, 202);
+            this.groupBox1.Size = new System.Drawing.Size(254, 156);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Darse de alta";
@@ -113,7 +116,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(35, 118);
+            this.label5.Location = new System.Drawing.Point(42, 100);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 14;
@@ -121,15 +124,15 @@
             // 
             // tBedad
             // 
-            this.tBedad.Location = new System.Drawing.Point(124, 118);
+            this.tBedad.Location = new System.Drawing.Point(124, 97);
             this.tBedad.Name = "tBedad";
-            this.tBedad.Size = new System.Drawing.Size(156, 20);
+            this.tBedad.Size = new System.Drawing.Size(113, 20);
             this.tBedad.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 95);
+            this.label2.Location = new System.Drawing.Point(6, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(117, 13);
             this.label2.TabIndex = 12;
@@ -137,15 +140,15 @@
             // 
             // comppasswBox
             // 
-            this.comppasswBox.Location = new System.Drawing.Point(124, 92);
+            this.comppasswBox.Location = new System.Drawing.Point(124, 71);
             this.comppasswBox.Name = "comppasswBox";
-            this.comppasswBox.Size = new System.Drawing.Size(156, 20);
+            this.comppasswBox.Size = new System.Drawing.Size(113, 20);
             this.comppasswBox.TabIndex = 11;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(38, 36);
+            this.label1.Location = new System.Drawing.Point(38, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 10;
@@ -154,7 +157,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(38, 64);
+            this.label3.Location = new System.Drawing.Point(38, 48);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 8;
@@ -162,17 +165,17 @@
             // 
             // passwBox
             // 
-            this.passwBox.Location = new System.Drawing.Point(116, 61);
+            this.passwBox.Location = new System.Drawing.Point(116, 45);
             this.passwBox.Name = "passwBox";
-            this.passwBox.Size = new System.Drawing.Size(164, 20);
+            this.passwBox.Size = new System.Drawing.Size(121, 20);
             this.passwBox.TabIndex = 9;
             // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(469, 360);
+            this.button3.Location = new System.Drawing.Point(357, 7);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(147, 53);
+            this.button3.Size = new System.Drawing.Size(147, 32);
             this.button3.TabIndex = 10;
             this.button3.Text = "desconectar";
             this.button3.UseVisualStyleBackColor = true;
@@ -186,9 +189,9 @@
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.passw_in);
             this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Location = new System.Drawing.Point(343, 67);
+            this.groupBox2.Location = new System.Drawing.Point(12, 208);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(258, 202);
+            this.groupBox2.Size = new System.Drawing.Size(186, 102);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "LOG IN";
@@ -196,7 +199,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(19, 75);
+            this.label4.Location = new System.Drawing.Point(26, 23);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(29, 13);
             this.label4.TabIndex = 12;
@@ -204,15 +207,15 @@
             // 
             // id_in
             // 
-            this.id_in.Location = new System.Drawing.Point(77, 72);
+            this.id_in.Location = new System.Drawing.Point(77, 20);
             this.id_in.Name = "id_in";
-            this.id_in.Size = new System.Drawing.Size(164, 20);
+            this.id_in.Size = new System.Drawing.Size(96, 20);
             this.id_in.TabIndex = 11;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(11, 105);
+            this.label6.Location = new System.Drawing.Point(11, 49);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(61, 13);
             this.label6.TabIndex = 8;
@@ -220,14 +223,14 @@
             // 
             // passw_in
             // 
-            this.passw_in.Location = new System.Drawing.Point(78, 102);
+            this.passw_in.Location = new System.Drawing.Point(78, 46);
             this.passw_in.Name = "passw_in";
-            this.passw_in.Size = new System.Drawing.Size(164, 20);
+            this.passw_in.Size = new System.Drawing.Size(95, 20);
             this.passw_in.TabIndex = 9;
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(126, 157);
+            this.button4.Location = new System.Drawing.Point(46, 72);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 5;
@@ -243,19 +246,19 @@
             this.groupBox3.Controls.Add(this.radioButton2);
             this.groupBox3.Controls.Add(this.radioButton1);
             this.groupBox3.Controls.Add(this.button5);
-            this.groupBox3.Location = new System.Drawing.Point(43, 290);
+            this.groupBox3.Location = new System.Drawing.Point(270, 52);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(400, 141);
+            this.groupBox3.Size = new System.Drawing.Size(234, 150);
             this.groupBox3.TabIndex = 14;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Consultas";
             // 
             // tBcons
             // 
-            this.tBcons.Location = new System.Drawing.Point(142, 27);
+            this.tBcons.Location = new System.Drawing.Point(109, 19);
             this.tBcons.Multiline = true;
             this.tBcons.Name = "tBcons";
-            this.tBcons.Size = new System.Drawing.Size(206, 67);
+            this.tBcons.Size = new System.Drawing.Size(91, 112);
             this.tBcons.TabIndex = 20;
             // 
             // radioButton3
@@ -299,7 +302,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(125, 100);
+            this.button5.Location = new System.Drawing.Point(25, 108);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 5;
@@ -309,18 +312,18 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(229, 25);
+            this.button7.Location = new System.Drawing.Point(140, 15);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(130, 23);
+            this.button7.Size = new System.Drawing.Size(110, 23);
             this.button7.TabIndex = 16;
             this.button7.Text = "num peticiones";
             this.button7.UseVisualStyleBackColor = true;
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(426, 26);
+            this.button8.Location = new System.Drawing.Point(262, 15);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.Size = new System.Drawing.Size(61, 23);
             this.button8.TabIndex = 17;
             this.button8.Text = "sockets";
             this.button8.UseVisualStyleBackColor = true;
@@ -329,27 +332,27 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(624, 108);
+            this.label7.Location = new System.Drawing.Point(208, 208);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(103, 13);
+            this.label7.Size = new System.Drawing.Size(88, 13);
             this.label7.TabIndex = 18;
-            this.label7.Text = "Lista de conectados";
+            this.label7.Text = "Lista conectados";
             // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(610, 131);
+            this.listBox1.Location = new System.Drawing.Point(211, 225);
             this.listBox1.MultiColumn = true;
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBox1.Size = new System.Drawing.Size(120, 95);
+            this.listBox1.Size = new System.Drawing.Size(89, 82);
             this.listBox1.TabIndex = 20;
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(627, 232);
+            this.button6.Location = new System.Drawing.Point(306, 280);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.Size = new System.Drawing.Size(64, 23);
             this.button6.TabIndex = 21;
             this.button6.Text = "INVITAR";
             this.button6.UseVisualStyleBackColor = true;
@@ -358,17 +361,46 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(666, 271);
+            this.label8.Location = new System.Drawing.Point(306, 225);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 22;
             this.label8.Text = "label8";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(379, 250);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 23;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(384, 235);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(86, 13);
+            this.label9.TabIndex = 24;
+            this.label9.Text = "CHAT PARTIDA";
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(411, 276);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(46, 27);
+            this.button9.TabIndex = 25;
+            this.button9.Text = "enviar";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(742, 442);
+            this.ClientSize = new System.Drawing.Size(516, 315);
+            this.Controls.Add(this.button9);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.listBox1);
@@ -425,6 +457,9 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button button9;
     }
 }
 

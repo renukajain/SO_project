@@ -17,6 +17,10 @@ namespace WindowsFormsApplication1
         Socket server;
         Thread atender;
         bool conect = false;
+        int idPartida;
+
+        //delegate void Delegado(string mensaje);
+
         public Form1()
         {
             InitializeComponent();
@@ -32,7 +36,10 @@ namespace WindowsFormsApplication1
             groupBox3.Visible = false;
             listBox1.Visible = false;
             label7.Visible = false;
+            label8.Visible = false;
             button6.Visible = false;
+            //label9.Visible = false;
+            //textBox1.Visible = false;
 
         }
         class Limpiar{
@@ -57,6 +64,34 @@ namespace WindowsFormsApplication1
                 listBox1.Items.Add(trozos[x]);
             listBox1.EndUpdate();
         }
+
+        private void enviarConfi(string anfitrion, int partida)
+        {
+            string mensaje;
+            string caption = anfitrion + " te esta invitando a la partida "+ partida;
+            switch (MessageBox.Show("Aceptas la invitación?", caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                case DialogResult.Yes:
+                    mensaje = "/2"; //para confirmar que se ha respondido y aceptado
+                    break;
+                default:
+                    mensaje = "/1";//para para confirmar que se ha respondido pero NO aceptado
+                    break;
+            }
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes("10/"+partida+mensaje);
+            server.Send(msg);
+        }
+
+        //public void escribirChat(string mensaje)
+        //{
+        //    textBox1.Text = mensaje;
+        //}
+
+        //private void habilitarChat()
+        //{
+        //    label9.Visible = true;
+        //    textBox1.Visible = true;
+        //}
 
         private void AtenderServidor()
         {
@@ -128,8 +163,25 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("lista" + trozos[1]);
                             break;
                         case 9:
+                            idPartida = Convert.ToInt16(trozos[1]);
                             label8.Text="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
+                            enviarConfi(trozos[2], Convert.ToInt16(trozos[1]));
                             break;
+                        case 10:
+                            if (trozos[2] == "0")
+                            {
+                                label8.Text = "Todos han aceptado la partida " + trozos[1];
+                                idPartida = Convert.ToInt16(trozos[1]);
+                            }
+                            else
+                                label8.Text = "alguien no ha aceptado la partida " + trozos[1];
+                            break;
+                        case 11:
+                            //Delegado del = new Delegado(escribirChat);
+                            //textBox1.Invoke(del, new object[] { trozos[1] });
+                            textBox1.Text = trozos[1];
+                            break;
+
                     }
                 }
                 catch (FormatException){ }
@@ -164,6 +216,7 @@ namespace WindowsFormsApplication1
                 listBox1.Visible = true;
                 label7.Visible = true;
                 button6.Visible = true;
+                label8.Visible = true;
 
             }
             catch (SocketException ex)
@@ -319,6 +372,14 @@ namespace WindowsFormsApplication1
                 invitados += nom[0] + ",";
             }
             string mensaje = "9/" + contador + invitados;
+            // Enviamos al servidor el nombre tecleado
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string mensaje = "11/" + Convert.ToString(idPartida) +"/" + textBox1.Text;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
