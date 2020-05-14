@@ -58,6 +58,8 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button6 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
+            this.button9 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -170,7 +172,7 @@
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(357, 7);
+            this.button3.Location = new System.Drawing.Point(341, 7);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(147, 32);
             this.button3.TabIndex = 10;
@@ -245,7 +247,7 @@
             this.groupBox3.Controls.Add(this.button5);
             this.groupBox3.Location = new System.Drawing.Point(270, 52);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(234, 150);
+            this.groupBox3.Size = new System.Drawing.Size(218, 150);
             this.groupBox3.TabIndex = 14;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Consultas";
@@ -349,7 +351,7 @@
             // 
             this.button6.Location = new System.Drawing.Point(306, 280);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.Size = new System.Drawing.Size(64, 23);
             this.button6.TabIndex = 21;
             this.button6.Text = "INVITAR";
             this.button6.UseVisualStyleBackColor = true;
@@ -364,11 +366,32 @@
             this.label8.TabIndex = 22;
             this.label8.Text = "label8";
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(413, 280);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(57, 23);
+            this.button9.TabIndex = 23;
+            this.button9.Text = "enviar";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(392, 254);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 24;
+            this.textBox1.Text = "CHAT";
+            this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(516, 315);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.listBox1);
@@ -425,6 +448,8 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
