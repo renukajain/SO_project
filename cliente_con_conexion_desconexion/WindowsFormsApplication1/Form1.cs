@@ -17,10 +17,14 @@ namespace WindowsFormsApplication1
         Socket server;
         Thread atender;
         bool conect = false;
+        int idPartida=-1;
+
+        delegate void delegado(string mensage);
+
         public Form1()
         {
             InitializeComponent();
-            CheckForIllegalCrossThreadCalls = false;
+            //CheckForIllegalCrossThreadCalls = false;
             button2.Visible = false;
             button3.Visible = false;
             button4.Visible = false;
@@ -76,6 +80,21 @@ namespace WindowsFormsApplication1
             server.Send(msg);
         }
 
+        private void setMssg(string mensaje)
+        {
+            label8.Text=mensaje;
+        }
+
+        private void actualizarPet(string pet)
+        {
+            button7.Text = pet;
+        }
+
+        private void actualizarChat(string text)
+        {
+            textBox1.Text = text;
+        }
+
         private void AtenderServidor()
         {
             while (true)
@@ -85,6 +104,7 @@ namespace WindowsFormsApplication1
                 server.Receive(msg2);
                 string mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 string [] trozos = mensaje.Split('/');
+                string notificacion;        
                 try
                 {
                     int cod = Convert.ToInt16(trozos[0]);
@@ -134,10 +154,13 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("Jugadores que han perdido:" + trozos[1]);
                             break;
                         case 6:
-                            mostrarLista(trozos[1]);
+                            delegado del4 = new delegado(mostrarLista);
+                            listBox1.Invoke(del4, new object[] { trozos[1] });
                             break;
                         case 7:
-                            button7.Text = "num peticiones: " + trozos[1];
+                            notificacion= "num peticiones: " + trozos[1];
+                            delegado del2 = new delegado(actualizarPet);
+                            button7.Invoke(del2, new object[] { notificacion });
                             break;
                         case 8:
                             if (trozos[1] == "-1")
@@ -146,16 +169,25 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("lista" + trozos[1]);
                             break;
                         case 9:
-                            label8.Text="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
+                            notificacion="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
+                            delegado del = new delegado(setMssg);
+                            label8.Invoke(del, new object[] { notificacion });
                             enviarConfi(trozos[2], Convert.ToInt16(trozos[1]));
                             break;
                         case 10:
+                            idPartida = Convert.ToInt16(trozos[1]);
                             if (trozos[2] == "0")
-                                label8.Text = "Todos han aceptado la partida " + trozos[1];
+                                notificacion = "Todos han aceptado la partida " + trozos[1];
                             else
-                                label8.Text= "alguien no ha aceptado la partida " + trozos[1];
+                                notificacion = "alguien no ha aceptado la partida " + trozos[1];
+                            delegado del1 = new delegado(setMssg);
+                            label8.Invoke(del1, new object[] { notificacion });
                             break;
-
+                        case 11:
+                            notificacion = trozos[1];
+                            delegado del3 = new delegado(actualizarChat);
+                            textBox1.Invoke(del3, new object[] { notificacion });
+                            break;
                     }
                 }
                 catch (FormatException){ }
@@ -346,6 +378,17 @@ namespace WindowsFormsApplication1
                 invitados += nom[0] + ",";
             }
             string mensaje = "9/" + contador + invitados;
+            // Enviamos al servidor el nombre tecleado
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void textBox1_Click(object sender, EventArgs e)
+        { textBox1.Text = ""; }
+
+        private void button9_Click(object sender, EventArgs e)//CHAT
+        {
+            string mensaje = "11/" + Convert.ToString(idPartida)+ "/"+textBox1.Text;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);

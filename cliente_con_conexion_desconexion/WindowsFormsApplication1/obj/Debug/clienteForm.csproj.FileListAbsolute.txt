@@ -170,3 +170,11 @@ C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\W
 C:\Users\renuka\Desktop\SO_project\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
 C:\Users\Miguel Rincon\Downloads\So\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\Miguel Rincon\Downloads\So\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csprojResolveAssemblyReference.cache
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
