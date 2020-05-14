@@ -104,7 +104,8 @@ namespace WindowsFormsApplication1
                 server.Receive(msg2);
                 string mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 string [] trozos = mensaje.Split('/');
-                string notificacion;        
+                string notificacion;
+                
                 try
                 {
                     int cod = Convert.ToInt16(trozos[0]);
