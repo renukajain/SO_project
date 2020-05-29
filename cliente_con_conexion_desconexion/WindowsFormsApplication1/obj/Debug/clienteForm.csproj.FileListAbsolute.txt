@@ -180,3 +180,4 @@ C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\
 C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
 C:\Users\Miguel Rincon\Documents\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
 C:\Users\Miguel Rincon\Documents\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormPartida.resources

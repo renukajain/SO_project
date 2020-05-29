@@ -20,6 +20,7 @@ namespace WindowsFormsApplication1
         int idPartida=-1;
 
         delegate void delegado(string mensage);
+        
 
         public Form1()
         {
@@ -93,6 +94,12 @@ namespace WindowsFormsApplication1
         private void actualizarChat(string text)
         {
             textBox1.Text = text;
+        }
+
+        private void abrirTablero(int id, int ficha)
+        {
+            FormPartida f = new FormPartida(id, server, ficha);
+            f.ShowDialog();
         }
 
         private void AtenderServidor()
@@ -178,7 +185,12 @@ namespace WindowsFormsApplication1
                         case 10:
                             idPartida = Convert.ToInt16(trozos[1]);
                             if (trozos[2] == "0")
+                            {
                                 notificacion = "Todos han aceptado la partida " + trozos[1];
+                                ThreadStart ts = delegate { abrirTablero(idPartida, Convert.ToInt16(trozos[3])); };
+                                Thread T = new Thread(ts);
+                                T.Start();
+                            }
                             else
                                 notificacion = "alguien no ha aceptado la partida " + trozos[1];
                             delegado del1 = new delegado(setMssg);
@@ -376,9 +388,9 @@ namespace WindowsFormsApplication1
             {
                 contador++;
                 string[] nom = listBox1.GetItemText(item).Split('\n');
-                invitados += nom[0] + ",";
+                invitados += nom[0] + "/";
             }
-            string mensaje = "9/" + contador + invitados;
+            string mensaje = "9" + invitados;
             // Enviamos al servidor el nombre tecleado
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);

@@ -20,11 +20,10 @@ typedef struct {
 } ListaConectados;
 
 typedef struct {
-	Conectado jugador [4]; //invitados a partida
+	Conectado jugador; //invitados a partida
 	Conectado creador; //creador de partida
 	int id; //identifiador partida
-	int numj; //numero de jugadores invitados
-	int accept; //para comprobar si todos han aceptado
+	int mov[3][3]; //jugadas
 } Partida;
 
 typedef struct {
@@ -200,6 +199,25 @@ void Consulta3(char nombre[20], char respuesta[200]){
 	sprintf (consulta, "%s%s';",consulta, nombre);
 	HacerConsulta(consulta, respuesta);
 }
+int comprobarGanador(int id){
+	int pos[3][3];
+	for(int f=0;f<3;f++)
+		for(int c =0; c<3; pos[f][c]= miTabla.partida[id].mov[f][c], c++ );
+		
+	for (int j = 0; j < 3; j++){
+		if (pos[0][j] == pos[1][j] && pos[2][j] == pos[1][j])
+			return pos[0][j];
+	}
+	for (int j = 0; j < 3; j++){
+		if (pos[j][0] == pos[j][1] && pos[j][2] == pos[j][1])
+			return pos[j][0];
+	}
+	if (pos[0][0] == pos[1][1] && pos[2][2] == pos[1][1])
+		return pos[0][0];
+	if (pos[0][2] == pos[1][1] && pos[2][0] == pos[1][1])
+		return pos[0][2];
+	return 0;
+}
 
 void *AtenderCliente(void *socket){
 	int sock_conn;
@@ -320,18 +338,12 @@ void *AtenderCliente(void *socket){
 		else if (codigo==9){ //invitacion
 			miTabla.partida[miTabla.nump].id = miTabla.nump;
 			miTabla.partida[miTabla.nump].creador= miLista.conectados[DamePos(sock_conn)];
-			miTabla.partida[miTabla.nump].accept =0;
-			p = strtok(NULL, "/");
-			int num =  atoi (p);//numero invitados
-			miTabla.partida[miTabla.nump].numj=num;
 			char invitado[20];
 			sprintf (respuesta, "9/%d/%s", miTabla.nump, conectado);
-			for(int j =0; j<num;j++){
-				p = strtok( NULL, ",");
-				strcpy(invitado,p);
-				miTabla.partida[miTabla.nump].jugador[j] = miLista.conectados[DamePos(DameSock(invitado))];
-				write(DameSock(invitado), respuesta, strlen(respuesta));
-			}
+			p = strtok( NULL, "/");
+			strcpy(invitado,p);
+			miTabla.partida[miTabla.nump].jugador = miLista.conectados[DamePos(DameSock(invitado))];
+			write(DameSock(invitado), respuesta, strlen(respuesta));
 			miTabla.nump++;
 		}
 		else if (codigo == 10){ //aceptar invitacion
@@ -339,16 +351,15 @@ void *AtenderCliente(void *socket){
 			id =  atoi (p);//numero partida
 			p = strtok(NULL, "/");
 			int respons =  atoi (p);
-			if (respons == 1){//aquesta persona no ha acceptat
+			if (respons == 1){//aquesta persona no ha acceptat //CAL ELIMINAL LA PARTIDA
 				sprintf(respuesta,"10/%d/-1", id);//
-				for(int j =0; j<miTabla.partida[id].numj;write(miTabla.partida[id].jugador[j].socket, respuesta, strlen(respuesta)), j++);
+				write(miTabla.partida[id].jugador.socket, respuesta, strlen(respuesta));
 				write(miTabla.partida[id].creador.socket, respuesta, strlen(respuesta));
 			}
-			else
-				miTabla.partida[id].accept = miTabla.partida[id].accept+1; //aumentem en nombre de respostes
-			if (miTabla.partida[id].accept==miTabla.partida[id].numj){ //si tothom ha respos si
-				sprintf(respuesta,"10/%d/0", id);//tothom ha acceptat
-				for(int j =0; j<miTabla.partida[id].numj;write(miTabla.partida[id].jugador[j].socket, respuesta, strlen(respuesta)), j++);
+			else{
+				sprintf(respuesta,"10/%d/0/2", id);//tothom ha acceptat
+				write(miTabla.partida[id].jugador.socket, respuesta, strlen(respuesta));
+				sprintf(respuesta,"10/%d/0/1", id);//tothom ha acceptat
 				write(miTabla.partida[id].creador.socket, respuesta, strlen(respuesta));
 			}
 		}
@@ -359,8 +370,23 @@ void *AtenderCliente(void *socket){
 			char mensaje[200];
 			strcpy(mensaje, p);
 			sprintf(respuesta,"11/%s: %s", conectado, mensaje);//tothom ha acceptat
-			for(int j =0; j<miTabla.partida[id].numj;write(miTabla.partida[id].jugador[j].socket, respuesta, strlen(respuesta)), j++);
+			write(miTabla.partida[id].jugador.socket, respuesta, strlen(respuesta));
 			write(miTabla.partida[id].creador.socket, respuesta, strlen(respuesta));
+		}
+		else if (codigo ==12){//registrar nueva jugada
+			p = strtok(NULL, "/");
+			id =  atoi (p);//numero partida
+			p = strtok(NULL, "/");
+			int player = atoi(p);//1 creador o 2 jugador invitado
+			p = strtok(NULL, "/");
+			int fila = atoi(p);
+			p = strtok(NULL, "/");
+			int colu = atoi(p);
+			miTabla.partida[id].mov[fila][colu]=player;
+			sprintf(respuesta,"12/%d/%d/%d/%d", id, player,fila,colu);//tothom ha acceptat
+			write(miTabla.partida[id].jugador.socket, respuesta, strlen(respuesta));
+			write(miTabla.partida[id].creador.socket, respuesta, strlen(respuesta));
+			int winner = comprobarGanador(id);
 		}
 		else
 				 printf("no hay consulta");
