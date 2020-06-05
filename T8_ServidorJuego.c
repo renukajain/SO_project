@@ -24,7 +24,7 @@ typedef struct {
 	int id; //identifiador partida
 	int numj; //numero de jugadores
 	int accept; //para comprobar si todos han aceptado
-	int matriz[11][11];
+	int matriz[11][11];//capacidad maxima
 } Partida;
 
 typedef struct {
