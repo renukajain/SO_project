@@ -19,13 +19,12 @@ namespace WindowsFormsApplication1
         bool conect;
         bool logIn;
         FormConsulta consulta;
-        ClassPartida ListaPartida;
+
+        ClassPartida listP = new ClassPartida();
 
         List<FormPartida> list = new List<FormPartida>();
 
         delegate void delegado(string mensage);
-        delegate void delForm(bool state);
-        delegate void delPartida(FormPartida p, int id);
 
         public Form1()
         {
@@ -84,7 +83,7 @@ namespace WindowsFormsApplication1
         private void abrirTablero(int partida, int miFicha, int dim)
         {
             FormPartida p = new FormPartida(server, partida, miFicha, dim);
-            //ListaPartida.Guardar(p, partida);
+            //listP.Guardar(p, partida);
             list.Add(p);
             p.ShowDialog();
         }
@@ -139,8 +138,7 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show("Error. No te has podido dar de baja");
                             break;
                         case 8:
-                            if (trozos[1] == "-1")
-                                MessageBox.Show("Error. No has podido cerrar session");
+                            
                             break;
                         case 9://invitacion
                             notificacion="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
@@ -159,7 +157,7 @@ namespace WindowsFormsApplication1
                             label8.Invoke(del1, new object[] { notificacion });
                             break;
                         case 11:
-                            //enviar mensaje de chat
+                            list.ElementAt(Convert.ToInt16(trozos[1])).recivirChat(trozos[2]);
                             break;
                     }
                 }
@@ -285,8 +283,13 @@ namespace WindowsFormsApplication1
         }
 
         private void hacerConsultaToolStripMenuItem_Click(object sender, EventArgs e){
-            consulta = new FormConsulta(server);
-            consulta.ShowDialog();
+            if (conect == true)
+            {
+                consulta = new FormConsulta(server);
+                consulta.ShowDialog();
+            }
+            else
+                MessageBox.Show("no hay conexion");
         }
 
         private void groupBoxState(bool a){//modifica formato del groupBox segun se desee iniciar sesion o darse de alta
@@ -311,33 +314,30 @@ namespace WindowsFormsApplication1
         }
 
         private void button2_Click(object sender, EventArgs e){
-            if (groupBox1.Text == "Log In")
-                logIn_SendServer();
+            if (conect == true)
+            {
+                if (groupBox1.Text == "Log In")
+                    logIn_SendServer();
+                else
+                    signIn();
+            }
             else
-                signIn();
+                MessageBox.Show("primero debes conectarte");
         }
 
-        private void logOutToolStripMenuItem_Click(object sender, EventArgs e){//envia peticion de cerrar sesion
-            if (logIn == true){
-                string mensaje = "8/";
-                // Enviamos al servidor el nombre tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-                logIn = false;
-                Limpiar l = new Limpiar();
-                l.BorrarTextBox(this, groupBox1);
-            }else
-                MessageBox.Show("primero debes iniciar sesion");
-        }
-
-        private void unsubscribeToolStripMenuItem_Click(object sender, EventArgs e){//envia peticion de darse de baja
+       private void unsubscribeToolStripMenuItem_Click(object sender, EventArgs e){//envia peticion de darse de baja
             if (logIn == true){
                 string mensaje = "7/";
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-                Limpiar l = new Limpiar();
-                l.BorrarTextBox(this, groupBox1);
+                atender.Abort();
+                this.BackColor = Color.Gray;
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                conect = false;
+                logIn = false;
+                conectarToolStripMenuItem.Text = "Conectar";
 
             }else
                 MessageBox.Show("primero debes iniciar sesion");

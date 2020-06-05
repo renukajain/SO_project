@@ -34,7 +34,7 @@ namespace WindowsFormsApplication1
                 if (dGV.CurrentCell.Value != null)
                     MessageBox.Show("CASILLA OCUPADA");
                 else{
-                    string mensaje = "12/" + Convert.ToString(partida)+ "/" + Convert.ToString(dGV.CurrentCell.RowIndex) + "/" + Convert.ToString(dGV.CurrentCell.ColumnIndex) + "/";
+                    string mensaje = "8/" + Convert.ToString(partida)+ "/" + Convert.ToString(dGV.CurrentCell.RowIndex) + "/" + Convert.ToString(dGV.CurrentCell.ColumnIndex) + "/";
                     // Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
@@ -71,6 +71,13 @@ namespace WindowsFormsApplication1
             contador = -1;//per a que ningu pugui fer mes moviments
         }
 
+        private void actualizarChat(string m){
+            listBox1.BeginUpdate();
+            listBox1.Items.Add(m);
+            listBox1.EndUpdate();
+
+        }
+
         public void recibirJugada(string datos)
         {
             dGV.Invoke(new delegado(actualizarTablero), new object[] { datos });
@@ -78,6 +85,11 @@ namespace WindowsFormsApplication1
 
         public void recibirGanador(string datos) {
             label1.Invoke(new delegado(avisoGanador), new object[] { datos });
-        }        
+        }
+
+        public void recivirChat(string mssg)
+        {
+            listBox1.Invoke(new delegado(actualizarChat), new object[] { mssg });
+        }
     }
 }
