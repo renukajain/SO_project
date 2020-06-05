@@ -16,29 +16,27 @@ namespace WindowsFormsApplication1
     {
         Socket server;
         Thread atender;
-        bool conect = false;
-        int idPartida=-1;
+        bool conect;
+        bool logIn;
+        FormConsulta consulta;
+        ClassPartida ListaPartida;
+
+        List<FormPartida> list = new List<FormPartida>();
 
         delegate void delegado(string mensage);
+        delegate void delForm(bool state);
+        delegate void delPartida(FormPartida p, int id);
 
         public Form1()
         {
             InitializeComponent();
-            //CheckForIllegalCrossThreadCalls = false;
-            button2.Visible = false;
-            button3.Visible = false;
-            button4.Visible = false;
-            button5.Visible = false;
-            button7.Visible = false;
-            button8.Visible = false;
             groupBox1.Visible = false;
-            groupBox2.Visible = false;
-            groupBox3.Visible = false;
+            opcionesToolStripMenuItem.Visible = false;
             listBox1.Visible = false;
             label7.Visible = false;
-            label8.Visible = false;
             button6.Visible = false;
-
+            conect = false;
+            logIn = false;
         }
         class Limpiar{
             public void BorrarTextBox(Control control, GroupBox gb){
@@ -53,7 +51,7 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void mostrarLista(string nombres)
+        private void mostrarLista(string nombres)//actualiza lista de conectados
         {
             string[] trozos = nombres.Split(' ');
             listBox1.Items.Clear();
@@ -63,7 +61,7 @@ namespace WindowsFormsApplication1
             listBox1.EndUpdate();
         }
 
-        private void enviarConfi(string anfitrion, int partida)
+        private void enviarConfi(string anfitrion, int partida)//pregunta si quiere jugar la partida y envia respuesta a server
         {
             string mensaje;
             string caption = anfitrion + " te esta invitando a la partida "+ partida;
@@ -80,25 +78,19 @@ namespace WindowsFormsApplication1
             server.Send(msg);
         }
 
-        private void setMssg(string mensaje)
+        private void setMssg(string mensaje) //funcioncion delegada de notificar
+        { label8.Text=mensaje; }
+
+        private void abrirTablero(int partida, int miFicha, int dim)
         {
-            label8.Text=mensaje;
+            FormPartida p = new FormPartida(server, partida, miFicha, dim);
+            //ListaPartida.Guardar(p, partida);
+            list.Add(p);
+            p.ShowDialog();
         }
 
-        private void actualizarPet(string pet)
-        {
-            button7.Text = pet;
-        }
-
-        private void actualizarChat(string text)
-        {
-            textBox1.Text = text;
-        }
-
-        private void AtenderServidor()
-        {
-            while (true)
-            {
+        private void AtenderServidor(){
+            while (true){
                 //Recibimos la respuesta del servidor
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
@@ -109,8 +101,7 @@ namespace WindowsFormsApplication1
                 try
                 {
                     int cod = Convert.ToInt16(trozos[0]);
-                    switch (cod)
-                    {
+                    switch (cod){
                         case 1: //sign in
                             //Recibimos la respuesta del servidor
                             if (trozos[1] == "-1")
@@ -119,75 +110,56 @@ namespace WindowsFormsApplication1
                                 MessageBox.Show(trozos[3]+" añadid@ con id "+trozos[2]);
                             break;
                         case 2://log in
-                            if (trozos[1] == "0")
-                                MessageBox.Show("ok");
-                            else if (trozos[1] == "-1")
+                            if (trozos[1] == "-1")
                                 MessageBox.Show("lista llena");
                             else if (trozos[1] == "-2")
                                 MessageBox.Show("contraseña erronea");
                             else if (trozos[1] == "-3")
                                 MessageBox.Show("no existe user");
-                            //else
-                                //MessageBox.Show("¡Bienvenid@!");
-                                break;
-                        case 3:
-                            if (trozos[1] == "-1")
-                                MessageBox.Show("no hay resultado");
-                            else if (trozos[1] == "-2")
-                                MessageBox.Show("error consultae");
                             else
-                                MessageBox.Show("Jugadores menores de edad en la partida:" + trozos[1]);
+                                logIn = true;
+                                break;
+                        case 3://consultas
+                                consulta.dameRespuesta(trozos);//enviamos respuesta al formulario
                             break;
                         case 4:
-                            if (trozos[1] == "-1")
-                                MessageBox.Show("no hay resultado");
-                            else if (trozos[1] == "-2")
-                                MessageBox.Show("error consultae");
-                            else
-                                MessageBox.Show("Ciudades donde ha jugado:" + trozos[1]);
+                            //ListaPartida.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirJugada(trozos[2]);
+                            list[Convert.ToInt16(trozos[1])].recibirJugada(trozos[2]);
                             break;
                         case 5:
-                            if (trozos[1] == "-1")
-                                MessageBox.Show("no hay resultado");
-                            else if (trozos[1] == "-2")
-                                MessageBox.Show("error consultae");
-                            else
-                                MessageBox.Show("Jugadores que han perdido:" + trozos[1]);
+                            //ListaPartida.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirGanador(trozos[2]);
+                            list[Convert.ToInt16(trozos[1])].recibirGanador(trozos[2]);
                             break;
-                        case 6:
+                        case 6://mostrar actualizar lista conectados
                             delegado del4 = new delegado(mostrarLista);
                             listBox1.Invoke(del4, new object[] { trozos[1] });
                             break;
-                        case 7:
-                            notificacion= "num peticiones: " + trozos[1];
-                            delegado del2 = new delegado(actualizarPet);
-                            button7.Invoke(del2, new object[] { notificacion });
+                        case 7://error darse de baja
+                            if (trozos[1] == "-1")
+                                MessageBox.Show("Error. No te has podido dar de baja");
                             break;
                         case 8:
                             if (trozos[1] == "-1")
-                                MessageBox.Show("no hay usuarios conectados");
-                            else
-                                MessageBox.Show("lista" + trozos[1]);
+                                MessageBox.Show("Error. No has podido cerrar session");
                             break;
-                        case 9:
+                        case 9://invitacion
                             notificacion="has sido invitado a partida id "+trozos[1]+" por "+trozos[2];
                             delegado del = new delegado(setMssg);
                             label8.Invoke(del, new object[] { notificacion });
                             enviarConfi(trozos[2], Convert.ToInt16(trozos[1]));
                             break;
-                        case 10:
-                            idPartida = Convert.ToInt16(trozos[1]);
-                            if (trozos[2] == "0")
-                                notificacion = "Todos han aceptado la partida " + trozos[1];
+                        case 10://partida aceptada
+                            if (trozos[1] == "0"){
+                                notificacion = "Todos han aceptado la partida " + trozos[2];
+                                abrirTablero(Convert.ToInt16(trozos[2]), Convert.ToInt16(trozos[3]), Convert.ToInt16(trozos[4]));
+                            }
                             else
                                 notificacion = "alguien no ha aceptado la partida " + trozos[1];
                             delegado del1 = new delegado(setMssg);
                             label8.Invoke(del1, new object[] { notificacion });
                             break;
                         case 11:
-                            notificacion = trozos[1];
-                            delegado del3 = new delegado(actualizarChat);
-                            textBox1.Invoke(del3, new object[] { notificacion });
+                            //enviar mensaje de chat
                             break;
                     }
                 }
@@ -195,14 +167,12 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)//establecer conexion
+        private void conectar()//establecer conexion
         {
-            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
-            //al que deseamos conectarnos    
+            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos    
             IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50074);
-            
-
+            IPEndPoint ipep = new IPEndPoint(direc, 50073);
+           
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -211,20 +181,12 @@ namespace WindowsFormsApplication1
                 this.BackColor = Color.Green;
                 MessageBox.Show("Conectado");
                 conect = true;
-                button2.Visible = true;
-                button3.Visible = true;
-                button4.Visible = true;
-                button5.Visible = true;
-                button7.Visible = true;
-                button8.Visible = true;
                 groupBox1.Visible = true;
-                groupBox2.Visible = true;
-                groupBox3.Visible = true;
+                groupBoxState(false);
                 listBox1.Visible = true;
                 label7.Visible = true;
                 button6.Visible = true;
-                label8.Visible = true;
-
+                opcionesToolStripMenuItem.Visible = true;
             }
             catch (SocketException ex)
             {
@@ -236,10 +198,9 @@ namespace WindowsFormsApplication1
             ThreadStart ts = delegate { AtenderServidor(); };
             atender  = new Thread (ts);
             atender.Start();
-
         }
 
-        private void button2_Click(object sender, EventArgs e)//sing in
+        private void signIn()//sing in
         {
             if (conect == false)
                 MessageBox.Show("NO SE HA REALIZADO CONEXION");
@@ -259,20 +220,16 @@ namespace WindowsFormsApplication1
                     MessageBox.Show("FORMATO DEL CAMPO EDAD INCORRECTO");
                 }
             }
-        }
-                        
+        }                   
 
-        private void button3_Click(object sender, EventArgs e)//desconexion
+        private void desconectar()//desconexion
         {
             Limpiar limpiar = new Limpiar();
             if (conect == false)
                 MessageBox.Show("NO HAY CONEXION");
-            else
-            {
+            else{
                 //Mensaje de desconexión
-                string mensaje = "0";
-
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes("0");
                 server.Send(msg);
 
                 // Nos desconectamos
@@ -285,115 +242,105 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)//log in
+        private void logIn_SendServer()//log in
         {
-            if (conect == false)
-                MessageBox.Show("NO HAY CONEXION");
-            else{
-                string mensaje = "2/" + id_in.Text + "/" + passw_in.Text;
+            string mensaje = "2/" + Nombre.Text + "/" + passwBox.Text;
+            // Enviamos al servidor el nombre tecleado
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void button6_Click(object sender, EventArgs e){//enviamos peticion invitacion a partida
+            if (logIn == true)
+            {
+                int contador = 0;
+                string invitados = "/";
+                foreach (var item in listBox1.SelectedItems)
+                {
+                    contador++;
+                    string[] nom = listBox1.GetItemText(item).Split('\n');
+                    invitados += nom[0] + ",";
+                }
+                string mensaje = "9/" + contador + invitados;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
+            else
+                MessageBox.Show("primero debes iniciar sesion");
         }
 
-        private void button5_Click(object sender, EventArgs e)//CONSUTAS
+        private void conectarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (conect == false)
-                MessageBox.Show("NO HAY CONEXION");
+            {
+                conectar();
+                conectarToolStripMenuItem.Text = "Desconectar";
+            }
             else
             {
-                if (tBcons.Text == "")
-                    MessageBox.Show("introduce datos necesarios para realizar consulta");
-                else
-                {
-                    if (radioButton1.Checked){//CONSULTA 1 NOMBRE JUGADORES MENORES DE EDAD
-                        try{
-                            int id = (Convert.ToInt16(tBcons.Text));
-                            string mensaje = "3/" + tBcons.Text;
-                            // Enviamos al servidor el nombre tecleado
-                            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                            server.Send(msg);
-                        }catch(FormatException){
-                            MessageBox.Show("formato campo id incorrecto");
-                        }
-                    }
-                    else if (radioButton2.Checked){//consulta 2 ciudad en las que ha jugado "username"
-                        string mensaje = "4/" + tBcons.Text;
-                        // Enviamos al servidor el nombre tecleado
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                        server.Send(msg);
-                    }
-                    else if (radioButton3.Checked){// consulta 3 jusgadores que han perdido
-                        string mensaje = "5/" + tBcons.Text;
-                        // Enviamos al servidor el nombre tecleado
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                        server.Send(msg);
-                    }
-                    else
-                        MessageBox.Show("selecciona cosulta");
-                }
+                desconectar();
+                conectarToolStripMenuItem.Text = "Conectar";
             }
-
         }
 
+        private void hacerConsultaToolStripMenuItem_Click(object sender, EventArgs e){
+            consulta = new FormConsulta(server);
+            consulta.ShowDialog();
+        }
 
+        private void groupBoxState(bool a){//modifica formato del groupBox segun se desee iniciar sesion o darse de alta
+            if (a == false){//a=false modo logIN   a=true modo signIN
+                groupBox1.Text = "Log In";
+                linkLabel1.Text = "Sing In";
+            }else{
+                groupBox1.Text = "Signg In";
+                linkLabel1.Text = "Log In";
+            }
+            label2.Visible = a;
+            label5.Visible = a;
+            comppasswBox.Visible = a;
+            tBedad.Visible = a;
+        }
 
-        private void radioButton1_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Nombre de los jugadores menores de edad en partida cuyo id debes introducir aquí"; }
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e){//
+            if (groupBox1.Text == "Log In")
+                groupBoxState(true);
+            else
+                groupBoxState(false);          
+        }
 
-        private void radioButton1_MouseLeave(object sender, EventArgs e)
-        { tBcons.Text = ""; }
+        private void button2_Click(object sender, EventArgs e){
+            if (groupBox1.Text == "Log In")
+                logIn_SendServer();
+            else
+                signIn();
+        }
 
-        private void radioButton2_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Ciudades donde ha jugado el jugagado cuyo username debes indicar aquí"; }
-
-        private void radioButton2_MouseLeave(object sender, EventArgs e)
-        { tBcons.Text = ""; }
-
-        private void radioButton3_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Jugadores que perdieron contra el usuario cuyo username tienes que indicar aquí"; }
-
-        private void radioButton3_MouseLeave(object sender, EventArgs e)
-        { tBcons.Text = ""; }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            if (conect == false)
-                MessageBox.Show("NO SE HA REALIZADO CONEXION");
-            else{
-                string mensaje = "8";
+        private void logOutToolStripMenuItem_Click(object sender, EventArgs e){//envia peticion de cerrar sesion
+            if (logIn == true){
+                string mensaje = "8/";
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-            }
+                logIn = false;
+                Limpiar l = new Limpiar();
+                l.BorrarTextBox(this, groupBox1);
+            }else
+                MessageBox.Show("primero debes iniciar sesion");
         }
 
-        private void button6_Click(object sender, EventArgs e){
-            int contador = 0;
-            string invitados = "/";
-            foreach (var item in listBox1.SelectedItems)
-            {
-                contador++;
-                string[] nom = listBox1.GetItemText(item).Split('\n');
-                invitados += nom[0] + ",";
-            }
-            string mensaje = "9/" + contador + invitados;
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-        }
+        private void unsubscribeToolStripMenuItem_Click(object sender, EventArgs e){//envia peticion de darse de baja
+            if (logIn == true){
+                string mensaje = "7/";
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+                Limpiar l = new Limpiar();
+                l.BorrarTextBox(this, groupBox1);
 
-        private void textBox1_Click(object sender, EventArgs e)
-        { textBox1.Text = ""; }
-
-        private void button9_Click(object sender, EventArgs e)//CHAT
-        {
-            string mensaje = "11/" + Convert.ToString(idPartida)+ "/"+textBox1.Text;
-            // Enviamos al servidor el nombre tecleado
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            }else
+                MessageBox.Show("primero debes iniciar sesion");
         }
     }
 }
-
