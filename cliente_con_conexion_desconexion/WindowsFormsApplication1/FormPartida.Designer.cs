@@ -45,10 +45,9 @@
             this.dGV.Name = "dGV";
             this.dGV.ReadOnly = true;
             this.dGV.RowHeadersVisible = false;
-            this.dGV.Size = new System.Drawing.Size(394, 323);
+            this.dGV.Size = new System.Drawing.Size(368, 284);
             this.dGV.TabIndex = 0;
             this.dGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dGV_CellClick);
-           
             // 
             // textBox2
             // 

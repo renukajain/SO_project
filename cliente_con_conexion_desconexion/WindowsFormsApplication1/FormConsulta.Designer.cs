@@ -35,12 +35,16 @@
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.button5 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.groupBox3.Controls.Add(this.dateTimePicker2);
+            this.groupBox3.Controls.Add(this.dateTimePicker1);
             this.groupBox3.Controls.Add(this.tBcons);
             this.groupBox3.Controls.Add(this.radioButton3);
             this.groupBox3.Controls.Add(this.radioButton2);
@@ -48,7 +52,7 @@
             this.groupBox3.Controls.Add(this.button5);
             this.groupBox3.Location = new System.Drawing.Point(26, 24);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(218, 150);
+            this.groupBox3.Size = new System.Drawing.Size(327, 183);
             this.groupBox3.TabIndex = 15;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Consultas";
@@ -58,13 +62,13 @@
             this.tBcons.Location = new System.Drawing.Point(109, 19);
             this.tBcons.Multiline = true;
             this.tBcons.Name = "tBcons";
-            this.tBcons.Size = new System.Drawing.Size(91, 112);
+            this.tBcons.Size = new System.Drawing.Size(190, 74);
             this.tBcons.TabIndex = 20;
             // 
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(25, 85);
+            this.radioButton3.Location = new System.Drawing.Point(25, 76);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(75, 17);
             this.radioButton3.TabIndex = 18;
@@ -77,7 +81,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(25, 58);
+            this.radioButton2.Location = new System.Drawing.Point(25, 51);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(75, 17);
             this.radioButton2.TabIndex = 17;
@@ -102,7 +106,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(25, 108);
+            this.button5.Location = new System.Drawing.Point(109, 153);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 5;
@@ -113,17 +117,31 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(63, 193);
+            this.label1.Location = new System.Drawing.Point(33, 222);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 16;
             this.label1.Text = "label1";
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Location = new System.Drawing.Point(99, 99);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
+            this.dateTimePicker1.TabIndex = 17;
+            // 
+            // dateTimePicker2
+            // 
+            this.dateTimePicker2.Location = new System.Drawing.Point(99, 125);
+            this.dateTimePicker2.Name = "dateTimePicker2";
+            this.dateTimePicker2.Size = new System.Drawing.Size(200, 20);
+            this.dateTimePicker2.TabIndex = 21;
+            // 
             // FormConsulta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(427, 265);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox3);
             this.Name = "FormConsulta";
@@ -144,5 +162,7 @@
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.DateTimePicker dateTimePicker2;
     }
 }

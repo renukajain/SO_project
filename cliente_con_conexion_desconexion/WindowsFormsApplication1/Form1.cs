@@ -22,7 +22,7 @@ namespace WindowsFormsApplication1
 
         ClassPartida listP = new ClassPartida();
 
-        List<FormPartida> list = new List<FormPartida>();
+        //List<FormPartida> list = new List<FormPartida>();
 
         delegate void delegado(string mensage);
 
@@ -80,11 +80,11 @@ namespace WindowsFormsApplication1
         private void setMssg(string mensaje) //funcioncion delegada de notificar
         { label8.Text=mensaje; }
 
-        private void abrirTablero(int partida, int miFicha, int dim)
+        private void abrirTablero(int partida, int miFicha, int dim)//FUNCION DELEGADA DE ABRIR EL FORMULARIO PARTIDA
         {
             FormPartida p = new FormPartida(server, partida, miFicha, dim);
-            //listP.Guardar(p, partida);
-            list.Add(p);
+            listP.Guardar(p, partida);
+            //list.Add(p);
             p.ShowDialog();
         }
 
@@ -122,12 +122,12 @@ namespace WindowsFormsApplication1
                                 consulta.dameRespuesta(trozos);//enviamos respuesta al formulario
                             break;
                         case 4:
-                            //ListaPartida.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirJugada(trozos[2]);
-                            list[Convert.ToInt16(trozos[1])].recibirJugada(trozos[2]);
+                            listP.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirJugada(trozos[2]);
+                            //list[Convert.ToInt16(trozos[1])].recibirJugada(trozos[2]);
                             break;
                         case 5:
-                            //ListaPartida.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirGanador(trozos[2]);
-                            list[Convert.ToInt16(trozos[1])].recibirGanador(trozos[2]);
+                            listP.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirGanador(trozos[2]);
+                            //list[Convert.ToInt16(trozos[1])].recibirGanador(trozos[2]);
                             break;
                         case 6://mostrar actualizar lista conectados
                             delegado del4 = new delegado(mostrarLista);
@@ -149,7 +149,9 @@ namespace WindowsFormsApplication1
                         case 10://partida aceptada
                             if (trozos[1] == "0"){
                                 notificacion = "Todos han aceptado la partida " + trozos[2];
-                                abrirTablero(Convert.ToInt16(trozos[2]), Convert.ToInt16(trozos[3]), Convert.ToInt16(trozos[4]));
+                                ThreadStart ts = delegate { abrirTablero(Convert.ToInt16(trozos[2]), Convert.ToInt16(trozos[3]), Convert.ToInt16(trozos[4])); };
+                                Thread T = new Thread(ts);
+                                T.Start();
                             }
                             else
                                 notificacion = "alguien no ha aceptado la partida " + trozos[1];
@@ -157,7 +159,8 @@ namespace WindowsFormsApplication1
                             label8.Invoke(del1, new object[] { notificacion });
                             break;
                         case 11:
-                            list.ElementAt(Convert.ToInt16(trozos[1])).recivirChat(trozos[2]);
+
+                            listP.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirChat (trozos[2]);
                             break;
                     }
                 }

@@ -34,7 +34,7 @@ namespace WindowsFormsApplication1
         { tBcons.Text = ""; }
 
         private void radioButton3_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Jugadores que perdieron contra el usuario cuyo username tienes que indicar aquí"; }
+        { tBcons.Text = "Jugadores que jugaron con el usuario cuyo username tienes que indicar aquí"; }
 
         private void radioButton3_MouseLeave(object sender, EventArgs e)
         { tBcons.Text = ""; }
@@ -65,6 +65,7 @@ namespace WindowsFormsApplication1
 
         private void button5_Click(object sender, EventArgs e)
         {
+            
             if (tBcons.Text == "")
                 MessageBox.Show("introduce datos necesarios para realizar consulta");
             else
@@ -102,5 +103,6 @@ namespace WindowsFormsApplication1
                     MessageBox.Show("selecciona cosulta");
             }
         }
+
     }
 }

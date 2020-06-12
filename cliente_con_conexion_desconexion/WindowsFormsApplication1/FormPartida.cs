@@ -27,6 +27,8 @@ namespace WindowsFormsApplication1
             this.partida = partida;
             this.miFicha = miFicha;
             this.dim = dim;
+            if (miFicha == 0)
+                this.BackColor = Color.Gold;
         }
 
         private void dGV_CellClick(object sender, DataGridViewCellEventArgs e){
@@ -34,7 +36,7 @@ namespace WindowsFormsApplication1
                 if (dGV.CurrentCell.Value != null)
                     MessageBox.Show("CASILLA OCUPADA");
                 else{
-                    string mensaje = "8/" + Convert.ToString(partida)+ "/" + Convert.ToString(dGV.CurrentCell.RowIndex) + "/" + Convert.ToString(dGV.CurrentCell.ColumnIndex) + "/";
+                    string mensaje = "8/" + Convert.ToString(partida) + "/" + Convert.ToString(dGV.CurrentCell.RowIndex) + "/" + Convert.ToString(dGV.CurrentCell.ColumnIndex) + "/" + miFicha.ToString();
                     // Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
@@ -59,10 +61,15 @@ namespace WindowsFormsApplication1
 
         private void actualizarTablero(string datos){
             string[] dato = datos.Split(',');
-            int fila = Convert.ToInt16(datos[0]);
-            int colu = Convert.ToInt16(datos[1]);
-            int juga = Convert.ToInt16(datos[2]);
-            dGV[fila, colu].Value = juga;
+            int fila = Convert.ToInt16(dato[0]);
+            int colu = Convert.ToInt16(dato[1]);
+            int juga = Convert.ToInt16(dato[2]);
+            dGV[colu, fila].Value = juga;
+            contador++;
+            if (contador % dim == miFicha)
+                this.BackColor = Color.Gold;
+            else
+                this.BackColor = Color.White;
         }
 
         private void avisoGanador(string ganador)
@@ -75,7 +82,6 @@ namespace WindowsFormsApplication1
             listBox1.BeginUpdate();
             listBox1.Items.Add(m);
             listBox1.EndUpdate();
-
         }
 
         public void recibirJugada(string datos)
@@ -87,7 +93,7 @@ namespace WindowsFormsApplication1
             label1.Invoke(new delegado(avisoGanador), new object[] { datos });
         }
 
-        public void recivirChat(string mssg)
+        public void recibirChat(string mssg)
         {
             listBox1.Invoke(new delegado(actualizarChat), new object[] { mssg });
         }
