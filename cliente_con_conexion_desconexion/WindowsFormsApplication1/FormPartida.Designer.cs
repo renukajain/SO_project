@@ -39,26 +39,29 @@
             // 
             // dGV
             // 
-            this.dGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dGV.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dGV.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dGV.ColumnHeadersHeight = 25;
             this.dGV.ColumnHeadersVisible = false;
-            this.dGV.Location = new System.Drawing.Point(21, 44);
+            this.dGV.Location = new System.Drawing.Point(164, 44);
             this.dGV.Name = "dGV";
             this.dGV.ReadOnly = true;
             this.dGV.RowHeadersVisible = false;
-            this.dGV.Size = new System.Drawing.Size(368, 284);
+            this.dGV.RowHeadersWidth = 25;
+            this.dGV.Size = new System.Drawing.Size(300, 300);
             this.dGV.TabIndex = 0;
             this.dGV.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dGV_CellClick);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(454, 226);
+            this.textBox2.Location = new System.Drawing.Point(9, 210);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(131, 20);
             this.textBox2.TabIndex = 26;
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(475, 252);
+            this.button9.Location = new System.Drawing.Point(30, 236);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(88, 23);
             this.button9.TabIndex = 25;
@@ -69,7 +72,7 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(454, 60);
+            this.listBox1.Location = new System.Drawing.Point(9, 44);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(130, 160);
             this.listBox1.TabIndex = 27;
@@ -77,7 +80,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(509, 41);
+            this.label2.Location = new System.Drawing.Point(64, 25);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(36, 13);
             this.label2.TabIndex = 28;
@@ -96,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(602, 402);
+            this.ClientSize = new System.Drawing.Size(518, 370);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.textBox2);

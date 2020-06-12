@@ -205,7 +205,11 @@ int unsubscribe(char nombre[20]){
 		return 0;
 }
 
-void HacerConsulta(char consulta[512], char respuesta[200]){
+void Consulta1(char nombre[20], char respuesta[512]){
+	char consulta[512];
+	sprintf(consulta, "SELECT Jugadores.username,Participacion.Partida FROM Jugadores,Participacion WHERE Participacion.Partida IN (SELECT Participacion.Partida ");
+	sprintf(consulta, "%sFROM Jugadores,Participacion WHERE Jugadores.username = '%s'and Jugadores.Id = Participacion.Jugador)", consulta, nombre);
+	sprintf(consulta, "%s and Participacion.Jugador = Jugadores.Id and Jugadores.username != '%s';", consulta, nombre);
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
 	int err=mysql_query (conn, consulta); 
@@ -221,31 +225,59 @@ void HacerConsulta(char consulta[512], char respuesta[200]){
 	else{
 		strcpy (respuesta, " ");
 		while(row!=NULL){
-			sprintf(respuesta, "%s%s, ", respuesta, row[0]);
+			sprintf(respuesta, "%s\n%s(%s)", respuesta, row[0], row[1]);
 			row = mysql_fetch_row (resultado);
 		}
 	}
 }
-
-void Consulta1(int id, char respuesta[200]){
+void Consulta2(char nombre[20], char conectado[20], char respuesta[200]){
 	char consulta[512];
-	sprintf (consulta,"SELECT Jugadores.username FROM Jugadores,Participacion WHERE Participacion.Partida = %d ", id);
-	strcat(consulta, "and Participacion.Jugador = Jugadores.Id and Jugadores.age<18;"); 
-	HacerConsulta(consulta, respuesta);
+	sprintf(consulta, "SELECT Partidas.winner,Partidas.Id FROM Jugadores,Participacion,Partidas WHERE Participacion.Partida IN (SELECT Participacion.Partida ");
+	sprintf(consulta, "%sFROM Jugadores,Participacion WHERE Jugadores.username = '%s'and Jugadores.Id = Participacion.Jugador)", consulta, conectado);
+	sprintf(consulta, "%s and Participacion.Partida = Partidas.Id and Jugadores.username = '%s' and Jugadores.Id = ", consulta, nombre);
+	strcat(consulta, "Participacion.Jugador and Participacion.Partida= Partidas.Id;");
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	int err=mysql_query (conn, consulta); 
+	if (err!=0) {
+		printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
+		strcpy (respuesta, "-2"); // error en consulta
+		exit (1);
+	}
+	resultado = mysql_store_result (conn); 
+	row = mysql_fetch_row (resultado);
+	if (row == NULL)
+		strcpy (respuesta, "-1"); //no hay resultados 
+	else{
+		strcpy (respuesta, " ");
+		while(row!=NULL){
+			sprintf(respuesta, "%s\n%s(%s)", respuesta, row[0], row[1]);
+			row = mysql_fetch_row (resultado);
+		}
+	}
 }
-void Consulta2(char nombre[20], char respuesta[200]){
+void Consulta3(int inici, int fin, char respuesta[512]){
 	char consulta[512];
-	sprintf (consulta,"SELECT Partidas.Ciudad FROM Jugadores,Participacion,Partidas WHERE Jugadores.username = '%s' ", nombre);
-	strcat(consulta, "and Participacion.Jugador = Jugadores.Id and Partidas.Id = Participacion.Partida;"); 
-	HacerConsulta(consulta, respuesta);
-}
-void Consulta3(char nombre[20], char respuesta[200]){
-	char consulta[512];
-	sprintf (consulta,"SELECT Jugadores.username FROM Jugadores,Participacion,Partidas WHERE Partidas.winner = '%s' and", nombre);
-	strcat (consulta, " Participacion.Partida = Partidas.Id and Jugadores.Id = Participacion.Jugador and Jugadores.username!='");
-	sprintf (consulta, "%s%s';",consulta, nombre);
-	HacerConsulta(consulta, respuesta);
-}
+	sprintf (consulta,"SELECT Partidas.Id FROM Partidas WHERE Partidas.fecha >= %d and Partidas.fecha <= %d;", inici, fin);
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	int err=mysql_query (conn, consulta); 
+	if (err!=0) {
+		printf ("Error al consultar datos de la base %u %s\n", mysql_errno(conn), mysql_error(conn));
+		strcpy (respuesta, "-2"); // error en consulta
+		exit (1);
+	}
+	resultado = mysql_store_result (conn); 
+	row = mysql_fetch_row (resultado);
+	if (row == NULL)
+		strcpy (respuesta, "-1"); //no hay resultados 
+	else{
+		strcpy (respuesta, " ");
+		while(row!=NULL){
+			sprintf(respuesta, "%s\n%s ", respuesta, row[0]);
+			row = mysql_fetch_row (resultado);
+		}
+	}}
 int comprobarWinner(int idP){
 	int raya = -1;
 	int linia3 = 0;
@@ -359,32 +391,33 @@ void *AtenderCliente(void *socket){
 					DameLista (noms);
 					for(int j=0;j<miLista.num;write (miLista.conectados[j].socket,noms, strlen(noms)), j++);
 				}
-				
 			}
 			else if(res == -1)
 			   sprintf (respuesta, "2/-2"); //contra erronia
 			else
 				sprintf (respuesta, "2/-3"); //no existe user
 		}
-		else if (codigo == 3){ //consulta 1
+		else if (codigo == 3){ //consulta 1 
 			p = strtok(NULL, "/");
-			id =  atoi (p);
-			char noms[200];
-			Consulta1(id, noms);
+			strcpy(nombre, p);
+			char noms[512];
+			Consulta1(nombre, noms);
 			sprintf(respuesta,"3/3/%s", noms);
 		}
 		else if (codigo == 4){ //consulta 2
 			p = strtok(NULL, "/");
 			strcpy(nombre, p);
 			char noms[200];
-			Consulta2(nombre, noms);
+			Consulta2(nombre, conectado, noms);
 			sprintf(respuesta,"3/4/%s", noms);
 		}
 		else if (codigo == 5){ //consulta 3
 			p = strtok(NULL, "/");
-			strcpy(nombre, p);
-			char noms[200];
-			Consulta3(nombre, noms);
+			int I = atoi(p);
+			p = strtok(NULL, "/");
+			int F = atoi(p);
+			char noms[521];
+			Consulta3(I, F ,noms);
 			sprintf(respuesta,"3/5/%s", noms);
 		}
 		else if (codigo==7){ //darse de baja
@@ -489,7 +522,7 @@ int main(int argc, char *argv[]){
 	miTabla.nump=0;
 	struct sockaddr_in serv_adr;
 	int sock_conn, sock_listen;
-	int puerto = 50073;
+	int puerto = 50072;
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)

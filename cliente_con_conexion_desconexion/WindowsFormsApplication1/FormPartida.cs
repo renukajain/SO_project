@@ -53,6 +53,7 @@ namespace WindowsFormsApplication1
         }
 
         private void FormPartida_Load(object sender, EventArgs e){
+            this.dGV.RowTemplate.Height = 30;
             this.label1.Text = "tu ficha es " + miFicha.ToString();
             this.dGV.RowCount = dim + 1;
             this.dGV.ColumnCount = dim + 1;

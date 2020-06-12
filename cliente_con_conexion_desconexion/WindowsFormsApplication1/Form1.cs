@@ -22,8 +22,6 @@ namespace WindowsFormsApplication1
 
         ClassPartida listP = new ClassPartida();
 
-        //List<FormPartida> list = new List<FormPartida>();
-
         delegate void delegado(string mensage);
 
         public Form1()
@@ -84,7 +82,6 @@ namespace WindowsFormsApplication1
         {
             FormPartida p = new FormPartida(server, partida, miFicha, dim);
             listP.Guardar(p, partida);
-            //list.Add(p);
             p.ShowDialog();
         }
 
@@ -123,11 +120,9 @@ namespace WindowsFormsApplication1
                             break;
                         case 4:
                             listP.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirJugada(trozos[2]);
-                            //list[Convert.ToInt16(trozos[1])].recibirJugada(trozos[2]);
                             break;
                         case 5:
                             listP.Recuperar(Convert.ToInt16(trozos[1])).formulario.recibirGanador(trozos[2]);
-                            //list[Convert.ToInt16(trozos[1])].recibirGanador(trozos[2]);
                             break;
                         case 6://mostrar actualizar lista conectados
                             delegado del4 = new delegado(mostrarLista);
@@ -172,7 +167,7 @@ namespace WindowsFormsApplication1
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos    
             IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50073);
+            IPEndPoint ipep = new IPEndPoint(direc, 50072);
            
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -182,6 +177,7 @@ namespace WindowsFormsApplication1
                 this.BackColor = Color.Green;
                 MessageBox.Show("Conectado");
                 conect = true;
+                conectarToolStripMenuItem.Text = "Desconectar";
                 groupBox1.Visible = true;
                 groupBoxState(false);
                 listBox1.Visible = true;
@@ -239,6 +235,7 @@ namespace WindowsFormsApplication1
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 conect = false;
+                conectarToolStripMenuItem.Text = "Conectar";
                 limpiar.BorrarTextBox(this, groupBox1);
             }
         }
@@ -271,27 +268,18 @@ namespace WindowsFormsApplication1
                 MessageBox.Show("primero debes iniciar sesion");
         }
 
-        private void conectarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void conectarToolStripMenuItem_Click(object sender, EventArgs e){
             if (conect == false)
-            {
                 conectar();
-                conectarToolStripMenuItem.Text = "Desconectar";
-            }
             else
-            {
                 desconectar();
-                conectarToolStripMenuItem.Text = "Conectar";
-            }
         }
 
         private void hacerConsultaToolStripMenuItem_Click(object sender, EventArgs e){
-            if (conect == true)
-            {
+            if (conect == true){
                 consulta = new FormConsulta(server);
                 consulta.ShowDialog();
-            }
-            else
+            }else
                 MessageBox.Show("no hay conexion");
         }
 

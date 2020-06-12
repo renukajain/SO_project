@@ -22,19 +22,19 @@ namespace WindowsFormsApplication1
         }
 
         private void radioButton1_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Nombre de los jugadores menores de edad en partida cuyo id debes introducir aquí"; }
+        { tBcons.Text = "Jugadores que jugaron con el usuario cuyo username tienes que indicar aquí"; }
 
         private void radioButton1_MouseLeave(object sender, EventArgs e)
         { tBcons.Text = ""; }
 
         private void radioButton2_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Ciudades donde ha jugado el jugagado cuyo username debes indicar aquí"; }
+        { tBcons.Text = "Ganadores de las partidas que has jugado con el usuario que indiques aquí"; }
 
         private void radioButton2_MouseLeave(object sender, EventArgs e)
         { tBcons.Text = ""; }
 
         private void radioButton3_MouseHover(object sender, EventArgs e)
-        { tBcons.Text = "Jugadores que jugaron con el usuario cuyo username tienes que indicar aquí"; }
+        { tBcons.Text = "Partidas que se jugaron en el intervalo de tiempo que indiques abajo"; }
 
         private void radioButton3_MouseLeave(object sender, EventArgs e)
         { tBcons.Text = ""; }
@@ -51,57 +51,73 @@ namespace WindowsFormsApplication1
             else{
                 switch (Convert.ToInt16(trozos[1])){
                     case 3:
-                        label1.Invoke(new delegado(escribirRes), new object[] { "jugadores menores " + trozos[2] });
+                        label1.Invoke(new delegado(escribirRes), new object[] { "Jugador(Partida): " + trozos[2] });
                         break;
                     case 4:
-                        label1.Invoke(new delegado(escribirRes), new object[] { "ciudades " + trozos[2] });
+                        label1.Invoke(new delegado(escribirRes), new object[] { "Ganadores(Partida) " + trozos[2] });
                         break;
                     case 5:
-                        label1.Invoke(new delegado(escribirRes), new object[] { "jugadores perdedores " + trozos[2] });
+                        label1.Invoke(new delegado(escribirRes), new object[] { "Partidas entre este intervalo " + trozos[2] });
                         break;
                 }
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            
-            if (tBcons.Text == "")
-                MessageBox.Show("introduce datos necesarios para realizar consulta");
-            else
-            {
-                if (radioButton1.Checked)
-                {//CONSULTA 1 NOMBRE JUGADORES MENORES DE EDAD
-                    try
-                    {
-                        int id = (Convert.ToInt16(tBcons.Text));
-                        string mensaje = "3/" + tBcons.Text;
-                        // Enviamos al servidor el nombre tecleado
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                        server.Send(msg);
-                    }
-                    catch (FormatException)
-                    {
-                        MessageBox.Show("formato campo id incorrecto");
-                    }
-                }
-                else if (radioButton2.Checked)
-                {//consulta 2 ciudad en las que ha jugado "username"
-                    string mensaje = "4/" + tBcons.Text;
-                    // Enviamos al servidor el nombre tecleado
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                    server.Send(msg);
-                }
-                else if (radioButton3.Checked)
-                {// consulta 3 jusgadores que han perdido
-                    string mensaje = "5/" + tBcons.Text;
-                    // Enviamos al servidor el nombre tecleado
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                    server.Send(msg);
-                }
+        private void button5_Click(object sender, EventArgs e){
+            if (radioButton3.Checked){// consulta 3 jusgadores que han perdido
+                int tiempoI = (dTP1.Value.Year * 10000) + (dTP1.Value.Month * 100) + dTP1.Value.Day;
+                int tiempoF = (dTP2.Value.Year * 10000) + (dTP2.Value.Month * 100) + dTP2.Value.Day;
+                if (tiempoF - tiempoI < 0)
+                    MessageBox.Show("Intervalo escogido no es adecuado.");
                 else
-                    MessageBox.Show("selecciona cosulta");
+                {
+                    string mensaje = "5/" + tiempoI.ToString() + "/" + tiempoF.ToString();
+                    // Enviamos al servidor el nombre tecleado
+                    MessageBox.Show(mensaje);
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
             }
+            else if (tBcons.Text == "")
+                MessageBox.Show("introduce datos necesarios para realizar consulta");
+            else if (radioButton1.Checked)
+            {//CONSULTA 1 NOMBRE JUGADORES QUE HAN JUGADO CON
+                string mensaje = "3/" + tBcons.Text;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            else if (radioButton2.Checked)
+            {//consulta 2 ciudad en las que ha jugado "username"
+                string mensaje = "4/" + tBcons.Text;
+                // Enviamos al servidor el nombre tecleado
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            else
+                MessageBox.Show("selecciona cosulta");
+        }
+
+        private void timerSET(bool a){
+            dTP1.Visible = a;
+            dTP2.Visible = a;
+            label2.Visible = a;
+            label3.Visible = a;
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            timerSET(true);
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            timerSET(false);
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            timerSET(false);
         }
 
     }
