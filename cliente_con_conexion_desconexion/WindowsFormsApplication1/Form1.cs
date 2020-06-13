@@ -167,7 +167,7 @@ namespace WindowsFormsApplication1
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos    
             IPAddress direc = IPAddress.Parse("147.83.117.22");
-            IPEndPoint ipep = new IPEndPoint(direc, 50072);
+            IPEndPoint ipep = new IPEndPoint(direc, 50074);
            
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -333,5 +333,10 @@ namespace WindowsFormsApplication1
             }else
                 MessageBox.Show("primero debes iniciar sesion");
         }
+
+       private void Form1_Load(object sender, EventArgs e)
+       {
+
+       }
     }
 }

@@ -24,8 +24,10 @@ CREATE TABLE Participacion (
 	Partida INTEGER,
 	Posicion INTEGER NOT NULL,
 	FOREIGN KEY (Jugador) REFERENCES Jugadores(Id),
+	PRIMARY KEY(Jugador, Partida),
 	FOREIGN KEY (Partida) REFERENCES Partidas(Id),
-PRIMARY KEY(Jugador, Partida)
+	CONSTRAINT fk_participacion
+	ON DELETE CASCADE
 )ENGINE = InnoDB;
 
 INSERT INTO Jugadores(Id, username, psswrd, age, scores) VALUES(1,'Juan', 'pass1', 16, 1234);

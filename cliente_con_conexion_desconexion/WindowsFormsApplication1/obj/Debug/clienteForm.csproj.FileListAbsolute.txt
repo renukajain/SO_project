@@ -182,3 +182,13 @@ C:\Users\Miguel Rincon\Documents\SO_project\cliente_con_conexion_desconexion\Win
 C:\Users\Miguel Rincon\Documents\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
 C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormConsulta.resources
 C:\Users\renuka\Desktop\so\proyecto\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormPartida.resources
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csprojResolveAssemblyReference.cache
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormConsulta.resources
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.FormPartida.resources
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\Aaron\SO_project\cliente_con_conexion_desconexion\WindowsFormsApplication1\obj\Debug\clienteForm.csproj.GenerateResource.Cache
